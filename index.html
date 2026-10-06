@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Demetre Mildiani</title>
+<meta name="description" content="Demetre Mildiani (დემეტრე მილდიანი), Tbilisi. Operations since 2022. LinkedIn, Facebook, X, Product Hunt and email.">
+<link rel="canonical" href="https://demetremildiani.com/">
+<link rel="alternate" hreflang="en" href="https://demetremildiani.com/">
+<link rel="alternate" hreflang="ka" href="https://demetremildiani.com/?lang=ka">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#131416" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#E8E9EB" media="(prefers-color-scheme: light)">
+<meta property="og:type" content="profile">
+<meta property="og:image" content="https://demetremildiani.com/assets/img/demetre-mildiani.jpg">
+<meta property="og:image:alt" content="Demetre Mildiani, smiling, in a dark zip-neck sweater">
+<meta name="twitter:image" content="https://demetremildiani.com/assets/img/demetre-mildiani.jpg">
+<meta property="og:title" content="Demetre Mildiani (დემეტრე მილდიანი)">
+<meta property="og:description" content="Operations since 2022. Tbilisi. LinkedIn, Facebook, X, Product Hunt and email.">
+<meta property="og:url" content="https://demetremildiani.com/">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ka_GE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@MildianiDemetre">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23131416'/%3E%3Crect x='11' y='7' width='10' height='12.5' fill='%23F2F2F4'/%3E%3Crect x='7' y='23.5' width='18' height='1.5' fill='%239A9CA2'/%3E%3C/svg%3E">
+<script>
+  /* Before first paint.
+     Theme: dark unless the system asks for light; "#dark" and "#light" in the address override both ways.
+     Language: "?lang=ka" wins, then the visitor's last choice, then English.
+     Motion gate (MOTION.md, pattern 0): only when JS runs and motion is allowed are the entrance blocks hidden, and a
+     failsafe shows them after 1.2 s whatever happens. Once the failsafe has shown them, the entrance never runs: the
+     page script checks the gate is still up before it animates anything. */
+  (function () {
+    var d = document.documentElement; d.classList.add('js');
+    function theme() { var h = location.hash; if (h === '#dark' || h === '#light') d.setAttribute('data-theme', h.slice(1)); else d.removeAttribute('data-theme'); }
+    theme(); window.addEventListener('hashchange', theme);
+    var l = null, m = /[?&]lang=(ka|en)\b/.exec(location.search);
+    if (m) l = m[1]; else { try { l = localStorage.getItem('lang'); } catch (e) {} }
+    if (l === 'ka') d.setAttribute('lang', 'ka');
+    try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('m-pre'); } catch (e) {}
+    setTimeout(function () { d.classList.remove('m-pre'); }, 1200);
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300..500&family=Noto+Sans+Georgian:wght@300..500&display=swap">
+<style>
+  /* Design read: a keynote slide at night. One lit portrait on a dark stage, the name set large and light under it,
+     one grey line, and the profiles as quiet large rows. Everything sits on one centre axis; the rest is black.
+     The light is the photograph's own: each print's backdrop is repainted so its edges meet the page at the page's
+     own tone (n4-keynote/photo/prints.py), so the print has no visible frame and the soft pool of light around his
+     head, which is the seamless's photographed falloff, is the only glow on the page.
+     Type: Hanken Grotesk, light (300) at size and a touch above light (340) in the rows; Noto Sans Georgian carries
+     the Georgian. */
+  :root {
+    --bg: #131416;          /* = the dark print's edge tone: the print melts into the stage on three sides */
+    --fg: #F2F2F4;          /* 16.5:1 */
+    --fg-2: #9A9CA2;        /* 6.7:1 */
+    --fg-3: #818389;        /* 4.9:1 */
+    --rule: #26272B;
+    --rule-hi: #3E3F44;
+    --fg-row: #BFC1C6;      /* the rows' labels, a step below white: 10.2:1 */
+    /* The Copy key rests dark (a keycap a step above the stage, one hairline, white ink: 14.7:1) and comes up to
+       white only under the pointer, on press and while "Copied" shows, so at rest the face stays the one lit thing. */
+    --key: #1E1F22; --key-ink: #F2F2F4; --key-ring: #3E3F44; --key-hi: rgba(255, 255, 255, .07); --key-lo: rgba(0, 0, 0, .35);
+    --key-lit: #F2F2F4; --key-lit-ink: #131416; --key-lit-hi: rgba(255, 255, 255, .9); --key-lit-lo: rgba(0, 0, 0, .22);
+    --ease: cubic-bezier(.22, 1, .36, 1);
+    color-scheme: dark;
+  }
+  /* Day: the same stage with the house lights up. A cool studio grey, the light print of the same sitting, whose
+     edges are the page tone and whose pool around the head is a few levels lighter; ink-black type. */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #E8E9EB; --fg: #111214; --fg-2: #4E5157; --fg-3: #5F6268; --rule: #CDCED2; --rule-hi: #A9ABB0;
+      --fg-row: #3A3D42; --key: #F5F6F7; --key-ink: #111214; --key-ring: #B4B6BB; --key-hi: rgba(255, 255, 255, .8); --key-lo: rgba(0, 0, 0, .07);
+      --key-lit: #16171A; --key-lit-ink: #F2F2F4; --key-lit-hi: rgba(255, 255, 255, .16); --key-lit-lo: rgba(0, 0, 0, .4);
+      color-scheme: light;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #E8E9EB; --fg: #111214; --fg-2: #4E5157; --fg-3: #5F6268; --rule: #CDCED2; --rule-hi: #A9ABB0;
+    --fg-row: #3A3D42; --key: #F5F6F7; --key-ink: #111214; --key-ring: #B4B6BB; --key-hi: rgba(255, 255, 255, .8); --key-lo: rgba(0, 0, 0, .07);
+    --key-lit: #16171A; --key-lit-ink: #F2F2F4; --key-lit-hi: rgba(255, 255, 255, .16); --key-lit-lo: rgba(0, 0, 0, .4);
+    color-scheme: light;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--bg); }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 400 1rem/1.45 "Hanken Grotesk", "Noto Sans Georgian", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-wrap: break-word;
+    font-feature-settings: "kern" 1;
+  }
+  :root[lang="ka"] body { line-height: 1.55; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radius: 3px; }
+  .nw { white-space: nowrap; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+  .m-pre [data-enter] { opacity: 0; }
+
+  /* The stage: one centre axis. */
+  .stage {
+    position: relative; min-height: 100vh; min-height: 100svh;
+    display: flex; flex-direction: column;
+    padding: 0 16px calc(32px + env(safe-area-inset-bottom));
+  }
+  .slide { width: 100%; max-width: 34rem; margin: 0 auto; }
+
+  /* The language key: a small grey word in the top corner, outside the composition. */
+  .top { position: absolute; top: 0; right: 4px; z-index: 1; }
+  .lang { display: none; }
+  .js .lang {
+    display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; padding: 0 12px;
+    font-size: .875rem; color: var(--fg-2); transition: color .22s var(--ease);
+  }
+  /* The key is a flag (6 Oct): the Georgian one leads to Georgian, the US one back to English. Only the other
+     language's flag shows. A hairline ring keeps the white of both flags on the light page. */
+  .lang .flag { display: block; height: 15px; width: auto; border-radius: 2px; box-shadow: 0 0 0 1px var(--rule-hi); opacity: .88; transition: opacity .22s var(--ease); }
+  :root[lang="ka"] .lang .flag-ge, :root:not([lang="ka"]) .lang .flag-us { display: none; }
+  @media (hover: hover) { .js .lang:hover .flag { opacity: 1; } }
+
+  /* The portrait: a hard-edged 4:5 print on the centre axis. No frame, no shadow: the backdrop's edges are the
+     page's own tone, so only the sweater's cut at the bottom draws an edge, and the pool of light around his head is
+     in the photograph. */
+  .pic { margin: 24px auto 0; width: clamp(124px, 37vw, 144px); aspect-ratio: 4 / 5; background: var(--bg); }
+  .pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+  /* The one large thing: the name, light, tight. Only the name and the address are full white. */
+  .name {
+    margin: 18px 0 0; text-align: center;
+    font-weight: 300; font-size: clamp(2.125rem, 10.8vw, 2.75rem); line-height: 1.04; letter-spacing: -.034em;
+  }
+  :root[lang="ka"] .name { font-family: "Noto Sans Georgian", sans-serif; font-size: clamp(1.625rem, 8vw, 2.125rem); line-height: 1.28; letter-spacing: 0; }
+  .line { margin: 8px auto 0; max-width: 24em; text-align: center; color: var(--fg-2); font-size: 1.0625rem; letter-spacing: -.004em; text-wrap: balance; }
+  :root[lang="ka"] .line { margin-top: 6px; font-size: .9375rem; line-height: 1.55; letter-spacing: 0; }
+
+  /* The rows: large and quiet. The labels sit a step below white and come up to white under the pointer, the way
+     the print came up on arrival; the note sits on the right, a hairline between. */
+  .links { list-style: none; margin: 24px 0 0; padding: 0; border-bottom: 1px solid var(--rule); }
+  .links li { border-top: 1px solid var(--rule); transition: border-color .22s var(--ease); }
+  .row {
+    /* The note always keeps at least 40% of the row, so under large text the label wraps instead of running under
+       the note. */
+    display: grid; grid-template-columns: minmax(0, auto) minmax(40%, 1fr) 12px; grid-template-areas: "lab hint arw";
+    align-items: center; column-gap: 14px; min-height: 52px; padding: 6px 0; transform-origin: 50% 50%;
+  }
+  .row.solo { grid-template-areas: "lab lab arw"; }   /* no note: the label has the whole line */
+  .lab { grid-area: lab; font-size: 1.4375rem; font-weight: 340; line-height: 1.2; letter-spacing: -.02em; color: var(--fg-row); transition: color .22s var(--ease); }
+  .hint { grid-area: hint; justify-self: end; text-align: right; font-size: .8125rem; line-height: 1.35; color: var(--fg-2); text-wrap: balance; }
+  :root[lang="ka"] .hint { font-size: .78125rem; line-height: 1.4; }
+  .arw { grid-area: arw; width: 12px; height: 12px; color: var(--fg-3); transition: color .22s var(--ease); }
+  @media (hover: hover) {
+    .row:hover .lab, .row:hover .arw { color: var(--fg); }
+  }
+  .row:focus-visible .lab { color: var(--fg); }
+  .row:focus-visible { outline-offset: 2px; }
+
+  /* The address: the one action. Full white and underlined; beside it the Copy key, dark until it is used. */
+  .mail-row {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "mlab copy" "mail mail";
+    align-items: baseline; column-gap: 12px; margin-top: 14px;
+  }
+  .mlab { grid-area: mlab; font-size: .8125rem; color: var(--fg-3); }
+  .mail { grid-area: mail; justify-self: start; display: inline-flex; align-items: center; min-height: 44px; min-width: 0; font-size: 1.1875rem; letter-spacing: -.01em; overflow-wrap: anywhere; text-decoration: underline; text-decoration-color: var(--rule-hi); text-decoration-thickness: 1px; text-underline-offset: .3em; transition: text-decoration-color .22s var(--ease); }
+  @media (hover: hover) { .mail:hover { text-decoration-color: currentColor; } }
+  .copy { display: none; }
+  /* The key: 44 px to the finger, 36 px to the eye. Transparent borders top and bottom take the difference, and the
+     fill is clipped inside them, so the visible key is inset from its target (the radii are 6 px once clipped). At
+     rest it is a dark keycap: a hairline ring, a faint lit top edge and a shaded bottom edge, white ink. Under the
+     pointer, on press and while "Copied" shows (.on) it comes up to white, the way the print came up on arrival. */
+  .js .copy {
+    grid-area: copy; display: inline-grid; min-height: 44px; min-width: 64px; padding: 0 14px;
+    border: solid transparent; border-width: 4px 0; border-radius: 6px / 10px;
+    background: var(--key); background-clip: padding-box; color: var(--key-ink);
+    box-shadow: inset 0 1px 0 var(--key-hi), inset 0 -1px 0 var(--key-lo), inset 0 0 0 1px var(--key-ring);
+    font-size: .875rem; font-weight: 500; letter-spacing: .002em;
+    transition: background-color .22s var(--ease), color .22s var(--ease), box-shadow .22s var(--ease);
+  }
+  .copy > span { grid-area: 1 / 1; place-self: center; white-space: nowrap; }
+  .cp-b { opacity: 0; }
+  .js .copy:active, .js .copy.on {
+    background-color: var(--key-lit); color: var(--key-lit-ink);
+    box-shadow: inset 0 1px 0 var(--key-lit-hi), inset 0 -1px 0 var(--key-lit-lo), inset 0 0 0 1px var(--key-lit);
+  }
+  @media (hover: hover) {
+    .js .copy:hover {
+      background-color: var(--key-lit); color: var(--key-lit-ink);
+      box-shadow: inset 0 1px 0 var(--key-lit-hi), inset 0 -1px 0 var(--key-lit-lo), inset 0 0 0 1px var(--key-lit);
+    }
+  }
+
+  /* Where the address and its key fit on one line, they share it, under the small label; where they don't (Georgian
+     under 420 px, English under 380 px), the key moves up beside the label. */
+  @media (min-width: 380px) and (max-width: 599px) { :root:not([lang="ka"]) .mail-row { grid-template-areas: "mlab mlab" "mail copy"; } }
+  @media (min-width: 420px) and (max-width: 599px) { :root[lang="ka"] .mail-row { grid-template-areas: "mlab mlab" "mail copy"; } }
+
+  /* Also: after the slide, small and grey. */
+  .also { width: 100%; max-width: 34rem; margin: 112px auto 0; font-size: .875rem; }
+  .also h2 { margin: 0 0 4px; font: inherit; color: var(--fg-3); }
+  .also ul { list-style: none; margin: 0; padding: 0; }
+  .also a { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 12px; align-items: baseline; min-height: 44px; padding: 11px 0; border-top: 1px solid var(--rule); }
+  .also .t { color: var(--fg-row); }
+  .also .w { color: var(--fg-2); }
+  @media (hover: hover) { .also a:hover .t { color: var(--fg); } }
+
+  @media (min-width: 600px) {
+    .stage { padding: 0 32px 40px; }
+    .top { right: 20px; top: 12px; }
+    .pic { width: 168px; margin-top: 76px; }
+    .name { font-size: 3.5rem; margin-top: 28px; }
+    :root[lang="ka"] .name { font-size: 2.625rem; }
+    .line { font-size: 1.1875rem; margin-top: 10px; }
+    :root[lang="ka"] .line { font-size: 1.0625rem; }
+    .links { margin-top: 48px; }
+    .row { min-height: 62px; }
+    .lab { font-size: 1.625rem; }
+    .hint { font-size: .9375rem; }
+    :root[lang="ka"] .hint { font-size: .875rem; }
+    .mail-row { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "mlab mail copy"; column-gap: 20px; margin-top: 20px; }
+    .mail { font-size: 1.25rem; }
+  }
+
+  /* Desktop: the first screen is the slide, centred on both axes. The four profiles become one row of four, each
+     hung from its own hairline; the address closes the slide on the centre axis; "Also" is a quiet line on the
+     stage floor. */
+  @media (min-width: 1000px) {
+    .stage { padding: 0 48px 18px; }   /* 30 px to the floor line's text, as the 44 px links keep 12 px under it */
+    /* Sizes and gaps follow the screen's height as well as its width, so the whole slide, address included, stays on
+       the first screen from a 1280 x 720 laptop to a 1920 x 1080 monitor. */
+    .slide { max-width: 60rem; margin: auto; padding: clamp(40px, 7vh, 72px) 0 clamp(28px, 5vh, 56px); }
+    .top { right: 36px; top: 20px; }
+    .pic { width: clamp(156px, 23vh, 240px); margin-top: 0; }
+    .name { font-size: clamp(4rem, min(5.8vw, 9.6vh), 5.75rem); margin-top: clamp(22px, 3.6vh, 36px); letter-spacing: -.038em; line-height: 1; }
+    :root[lang="ka"] .name { font-size: clamp(2.875rem, min(4.2vw, 7vh), 4.125rem); line-height: 1.2; }
+    .line { font-size: 1.375rem; margin-top: 14px; }
+    :root[lang="ka"] .line { font-size: 1.1875rem; margin-top: 10px; }
+    .links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 32px; margin-top: clamp(40px, 8vh, 80px); border: 0; }
+    .row {
+      grid-template-columns: minmax(0, 1fr) 12px; grid-template-areas: "lab arw" "hint hint";
+      align-items: baseline; row-gap: 6px; min-height: 0; padding: 18px 0 0;
+    }
+    .row.solo { grid-template-areas: "lab arw"; }
+    .lab { font-size: 1.75rem; }
+    .arw { align-self: center; }
+    .hint { justify-self: start; text-align: left; font-size: .9375rem; }
+    :root[lang="ka"] .hint { font-size: .875rem; }
+    @media (hover: hover) { .links li:hover { border-top-color: var(--rule-hi); } }
+    .mail-row { grid-template-columns: auto auto auto; justify-content: center; column-gap: 22px; margin-top: clamp(36px, 7vh, 72px); }
+    .mlab { font-size: .9375rem; }
+    .mail { font-size: 1.375rem; }
+    .also { max-width: none; margin: -12px 0 0; display: flex; justify-content: center; align-items: baseline; gap: 4px 28px; flex-wrap: wrap; }
+    .also h2 { margin: 0; }
+    .also ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 28px; }
+    /* Still 44 px tall to the finger (an iPad in landscape is a touch screen at desktop width); the text sits on the
+       same baseline as before, and the stage's bottom padding gives back the extra height. */
+    .also a { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border: 0; }
+    .also .t { color: var(--fg-2); transition: color .22s var(--ease); }
+    .also .w { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+    .also li { position: relative; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0.01ms !important; animation: none !important; }
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://demetremildiani.com/#person",
+  "name": "Demetre Mildiani",
+  "alternateName": "დემეტრე მილდიანი",
+  "givenName": "Demetre",
+  "familyName": "Mildiani",
+  "url": "https://demetremildiani.com/",
+  "image": "https://demetremildiani.com/assets/img/demetre-mildiani.jpg",
+  "email": "mailto:contact@demetremildiani.com",
+  "homeLocation": { "@type": "Place", "name": "Tbilisi, Georgia" },
+  "knowsLanguage": ["ka", "en"],
+  "sameAs": [
+    "https://www.linkedin.com/in/demetre-mildiani/",
+    "https://www.facebook.com/demetre.mildiani/",
+    "https://x.com/MildianiDemetre",
+    "https://www.producthunt.com/@demetre_mildiani1"
+  ]
+}
+</script>
+</head>
+<body>
+<main class="stage">
+  <div class="top" data-enter><button class="lang" type="button" id="lang" lang="ka" aria-label="ქართულად" title="ქართულად"><svg class="flag flag-ge" viewBox="0 0 300 200" width="30" height="20" aria-hidden="true" focusable="false"><path fill="#FFFFFF" d="M0 0h300v200H0z"/><path fill="#DA291C" d="M130 0h40v200h-40zM0 80h300v40H0zM61.8 36.8L58 19L72 19L68.2 36.8L86 33L86 47L68.2 43.2L72 61L58 61L61.8 43.2L44 47L44 33zM231.8 36.8L228 19L242 19L238.2 36.8L256 33L256 47L238.2 43.2L242 61L228 61L231.8 43.2L214 47L214 33zM61.8 156.8L58 139L72 139L68.2 156.8L86 153L86 167L68.2 163.2L72 181L58 181L61.8 163.2L44 167L44 153zM231.8 156.8L228 139L242 139L238.2 156.8L256 153L256 167L238.2 163.2L242 181L228 181L231.8 163.2L214 167L214 153z"/></svg><svg class="flag flag-us" viewBox="0 0 7410 3900" width="38" height="20" aria-hidden="true" focusable="false"><path fill="#FFFFFF" d="M0 0h7410v3900H0z"/><path fill="#B22234" d="M0 0h7410v300H0zM0 600h7410v300H0zM0 1200h7410v300H0zM0 1800h7410v300H0zM0 2400h7410v300H0zM0 3000h7410v300H0zM0 3600h7410v300H0z"/><path fill="#3C3B6E" d="M0 0h2964v2100H0z"/><path fill="#FFFFFF" d="M246 90L273 173L360 173L289 225L316 308L246 256L175 308L202 225L131 173L219 173zM737 90L764 173L851 173L781 225L808 308L737 256L666 308L693 225L623 173L710 173zM1228 90L1255 173L1343 173L1272 225L1299 308L1228 256L1158 308L1185 225L1114 173L1202 173zM1720 90L1747 173L1834 173L1764 225L1791 308L1720 256L1649 308L1676 225L1606 173L1693 173zM2211 90L2238 173L2326 173L2255 225L2282 308L2211 256L2141 308L2168 225L2097 173L2184 173zM2703 90L2730 173L2817 173L2746 225L2773 308L2703 256L2632 308L2659 225L2588 173L2676 173zM491 301L518 384L606 384L535 435L562 518L491 467L421 518L448 435L377 384L464 384zM983 301L1010 384L1097 384L1026 435L1053 518L983 467L912 518L939 435L869 384L956 384zM1474 301L1501 384L1588 384L1518 435L1545 518L1474 467L1404 518L1431 435L1360 384L1447 384zM1966 301L1993 384L2080 384L2009 435L2036 518L1966 467L1895 518L1922 435L1851 384L1939 384zM2457 301L2484 384L2571 384L2501 435L2528 518L2457 467L2386 518L2413 435L2343 384L2430 384zM246 512L273 595L360 595L289 646L316 729L246 678L175 729L202 646L131 595L219 595zM737 512L764 595L851 595L781 646L808 729L737 678L666 729L693 646L623 595L710 595zM1228 512L1255 595L1343 595L1272 646L1299 729L1228 678L1158 729L1185 646L1114 595L1202 595zM1720 512L1747 595L1834 595L1764 646L1791 729L1720 678L1649 729L1676 646L1606 595L1693 595zM2211 512L2238 595L2326 595L2255 646L2282 729L2211 678L2141 729L2168 646L2097 595L2184 595zM2703 512L2730 595L2817 595L2746 646L2773 729L2703 678L2632 729L2659 646L2588 595L2676 595zM491 722L518 805L606 805L535 857L562 940L491 888L421 940L448 857L377 805L464 805zM983 722L1010 805L1097 805L1026 857L1053 940L983 888L912 940L939 857L869 805L956 805zM1474 722L1501 805L1588 805L1518 857L1545 940L1474 888L1404 940L1431 857L1360 805L1447 805zM1966 722L1993 805L2080 805L2009 857L2036 940L1966 888L1895 940L1922 857L1851 805L1939 805zM2457 722L2484 805L2571 805L2501 857L2528 940L2457 888L2386 940L2413 857L2343 805L2430 805zM246 933L273 1016L360 1016L289 1067L316 1150L246 1099L175 1150L202 1067L131 1016L219 1016zM737 933L764 1016L851 1016L781 1067L808 1150L737 1099L666 1150L693 1067L623 1016L710 1016zM1228 933L1255 1016L1343 1016L1272 1067L1299 1150L1228 1099L1158 1150L1185 1067L1114 1016L1202 1016zM1720 933L1747 1016L1834 1016L1764 1067L1791 1150L1720 1099L1649 1150L1676 1067L1606 1016L1693 1016zM2211 933L2238 1016L2326 1016L2255 1067L2282 1150L2211 1099L2141 1150L2168 1067L2097 1016L2184 1016zM2703 933L2730 1016L2817 1016L2746 1067L2773 1150L2703 1099L2632 1150L2659 1067L2588 1016L2676 1016zM491 1143L518 1226L606 1226L535 1278L562 1361L491 1309L421 1361L448 1278L377 1226L464 1226zM983 1143L1010 1226L1097 1226L1026 1278L1053 1361L983 1309L912 1361L939 1278L869 1226L956 1226zM1474 1143L1501 1226L1588 1226L1518 1278L1545 1361L1474 1309L1404 1361L1431 1278L1360 1226L1447 1226zM1966 1143L1993 1226L2080 1226L2009 1278L2036 1361L1966 1309L1895 1361L1922 1278L1851 1226L1939 1226zM2457 1143L2484 1226L2571 1226L2501 1278L2528 1361L2457 1309L2386 1361L2413 1278L2343 1226L2430 1226zM246 1354L273 1437L360 1437L289 1488L316 1571L246 1520L175 1571L202 1488L131 1437L219 1437zM737 1354L764 1437L851 1437L781 1488L808 1571L737 1520L666 1571L693 1488L623 1437L710 1437zM1228 1354L1255 1437L1343 1437L1272 1488L1299 1571L1228 1520L1158 1571L1185 1488L1114 1437L1202 1437zM1720 1354L1747 1437L1834 1437L1764 1488L1791 1571L1720 1520L1649 1571L1676 1488L1606 1437L1693 1437zM2211 1354L2238 1437L2326 1437L2255 1488L2282 1571L2211 1520L2141 1571L2168 1488L2097 1437L2184 1437zM2703 1354L2730 1437L2817 1437L2746 1488L2773 1571L2703 1520L2632 1571L2659 1488L2588 1437L2676 1437zM491 1565L518 1648L606 1648L535 1699L562 1782L491 1731L421 1782L448 1699L377 1648L464 1648zM983 1565L1010 1648L1097 1648L1026 1699L1053 1782L983 1731L912 1782L939 1699L869 1648L956 1648zM1474 1565L1501 1648L1588 1648L1518 1699L1545 1782L1474 1731L1404 1782L1431 1699L1360 1648L1447 1648zM1966 1565L1993 1648L2080 1648L2009 1699L2036 1782L1966 1731L1895 1782L1922 1699L1851 1648L1939 1648zM2457 1565L2484 1648L2571 1648L2501 1699L2528 1782L2457 1731L2386 1782L2413 1699L2343 1648L2430 1648zM246 1775L273 1858L360 1858L289 1910L316 1993L246 1941L175 1993L202 1910L131 1858L219 1858zM737 1775L764 1858L851 1858L781 1910L808 1993L737 1941L666 1993L693 1910L623 1858L710 1858zM1228 1775L1255 1858L1343 1858L1272 1910L1299 1993L1228 1941L1158 1993L1185 1910L1114 1858L1202 1858zM1720 1775L1747 1858L1834 1858L1764 1910L1791 1993L1720 1941L1649 1993L1676 1910L1606 1858L1693 1858zM2211 1775L2238 1858L2326 1858L2255 1910L2282 1993L2211 1941L2141 1993L2168 1910L2097 1858L2184 1858zM2703 1775L2730 1858L2817 1858L2746 1910L2773 1993L2703 1941L2632 1993L2659 1910L2588 1858L2676 1858z"/></svg></button></div>
+
+  <div class="slide">
+    <figure class="pic" data-enter>
+      <picture>
+        <source id="pic-light" media="(prefers-color-scheme: light)" type="image/webp" srcset="assets/img/demetre-mildiani-portrait-light-600.webp 600w, assets/img/demetre-mildiani-portrait-light-1200.webp 1200w" sizes="(min-width: 1000px) 240px, (min-width: 600px) 168px, 144px">
+        <source type="image/webp" srcset="assets/img/demetre-mildiani-portrait-dark-600.webp 600w, assets/img/demetre-mildiani-portrait-dark-1200.webp 1200w" sizes="(min-width: 1000px) 240px, (min-width: 600px) 168px, 144px">
+        <img src="assets/img/demetre-mildiani-portrait-dark-600.jpg" srcset="assets/img/demetre-mildiani-portrait-dark-600.jpg 600w, assets/img/demetre-mildiani-portrait-dark-1200.jpg 1200w" sizes="(min-width: 1000px) 240px, (min-width: 600px) 168px, 144px" width="600" height="750" alt="Demetre Mildiani, smiling, in a dark zip-neck sweater, in front of a charcoal studio backdrop" data-ia="alt:alt" decoding="async">
+      </picture>
+    </figure>
+
+    <h1 class="name" data-enter><span data-i="n1">Demetre</span> <span data-i="n2">Mildiani</span></h1>
+    <p class="line" data-enter data-i="line">Operations since 2022. Tbilisi.</p>
+
+    <ul class="links" aria-label="Profiles" data-ia="aria-label:profiles" data-enter>
+      <li><a class="row" rel="me" href="https://www.linkedin.com/in/demetre-mildiani/"><span class="lab" lang="en">LinkedIn</span><span class="hint" data-i="h.li">Work and posts</span><svg class="arw" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M4 2.5h5.5V8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></a></li>
+      <li><a class="row solo" rel="me" href="https://www.facebook.com/demetre.mildiani/"><span class="lab" lang="en">Facebook</span><svg class="arw" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M4 2.5h5.5V8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></a></li>
+      <li><a class="row" rel="me" href="https://x.com/MildianiDemetre"><span class="lab" lang="en">X</span><span class="hint" data-i="h.x">The 100 apps, one by one</span><svg class="arw" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M4 2.5h5.5V8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></a></li>
+      <li><a class="row" rel="me" href="https://www.producthunt.com/@demetre_mildiani1"><span class="lab" lang="en">Product Hunt</span><span class="hint" data-i="h.ph">Every day since 8&nbsp;February 2024</span><svg class="arw" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M4 2.5h5.5V8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></a></li>
+    </ul>
+
+    <div class="mail-row" data-enter>
+      <span class="mlab" data-i="email">Email</span>
+      <a class="mail" href="mailto:contact@demetremildiani.com" id="mail">contact@<wbr>demetremildiani.com</a>
+      <button class="copy" type="button" id="copy" aria-label="Copy email address" data-ia="aria-label:copyAria" aria-describedby="mail"><span class="cp-a" data-i="copy">Copy</span><span class="cp-b" aria-hidden="true" data-i="copied">Copied</span></button>
+      <span class="sr" role="status" id="copied"></span>
+    </div>
+  </div>
+
+  <section class="also" aria-labelledby="also-h" data-enter>
+    <h2 id="also-h" data-i="also">Also</h2>
+    <ul>
+      <li><a href="https://www.linkedin.com/posts/demetre-mildiani_100dayappchallenge-ai-nocode-activity-7424340373432332288-LO6H"><span class="t" lang="en">100 Day App Challenge</span><span class="w" data-i="a1.w">LinkedIn post</span></a></li>
+      <li><a href="https://timecable.vercel.app/"><span class="t" lang="en">TimeCable</span><span class="w" data-i="a2.w">Live app</span></a></li>
+      <li><a href="https://www.facebook.com/Medialab.ge/videos/2369027900217170/"><span class="t" data-i="a3.t">Seminar at ComCom MediaLab</span><span class="w" data-i="a3.w">Video</span></a></li>
+      <li><a href="https://www.youtube.com/watch?v=S8SMmadAWkg&amp;t=2835s"><span class="t" data-i="a4.t">AI Pulse Georgia podcast</span><span class="w" lang="en">YouTube</span></a></li>
+    </ul>
+  </section>
+</main>
+<script src="assets/motion/motion-14.0.0.min.js"></script>
+<script>
+  (function () {
+    var M = window.Motion, root = document.documentElement;
+    var RM = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+    function calm() { return !!M && !RM.matches; }
+    function syncRM() { if (M && M.MotionGlobalConfig) M.MotionGlobalConfig.skipAnimations = RM.matches; }
+    syncRM(); if (RM.addEventListener) RM.addEventListener('change', syncRM);
+    var EASE_OUT = [0.22, 1, 0.36, 1], EASE_IN = [0.4, 0, 1, 1];
+    var SETTLE = { type: 'spring', duration: 0.45, bounce: 0.15 }, FIRM = { type: 'spring', duration: 0.18, bounce: 0 };
+    function jump(els, kf) {
+      [].concat(els.length != null && !els.style ? [].slice.call(els) : [els]).forEach(function (el) {
+        for (var k in kf) { var v = kf[k]; el.style[k] = Array.isArray(v) ? v[v.length - 1] : v; }
+      });
+      return Promise.resolve();
+    }
+    function to(els, kf, opt) { return calm() ? M.animate(els, kf, opt) : jump(els, kf); }
+
+    var I = {
+      title: ['Demetre Mildiani', 'დემეტრე მილდიანი'],
+      desc: ['Demetre Mildiani (დემეტრე მილდიანი), Tbilisi. Operations since 2022. LinkedIn, Facebook, X, Product Hunt and email.',
+             'დემეტრე მილდიანი (Demetre Mildiani), თბილისი. ოპერაციული მართვა 2022 წლიდან. LinkedIn, Facebook, X, Product Hunt და ელფოსტა.'],
+      'lang.btn': ['ქართულად', 'English'],
+      n1: ['Demetre', 'დემეტრე'],
+      n2: ['Mildiani', 'მილდიანი'],
+      line: ['Operations since 2022. Tbilisi.', 'ოპერაციული მართვა 2022 წლიდან. თბილისი.'],
+      alt: ['Demetre Mildiani, smiling, in a dark zip-neck sweater, in front of a charcoal studio backdrop',
+            'დემეტრე მილდიანი, იღიმის, მუქ სვიტერში, მუქ ნაცრისფერ ფონზე'],
+      profiles: ['Profiles', 'პროფილები'],
+      'h.li': ['Work and posts', 'სამსახური და პოსტები'],
+      'h.x': ['The 100 apps, one by one', '100 აპი, <span class="nw">თითო-თითოდ</span>'],
+      'h.ph': ['Every day since 8&nbsp;February 2024', 'ყოველდღე, 2024 წლის 8&nbsp;თებერვლიდან'],
+      email: ['Email', 'ელფოსტა'],
+      copy: ['Copy', 'კოპირება'],
+      copyAria: ['Copy email address', 'ელფოსტის მისამართის კოპირება'],
+      copied: ['Copied', 'დაკოპირდა'],
+      copiedSr: ['Email address copied', 'ელფოსტის მისამართი დაკოპირდა'],
+      also: ['Also', 'ასევე'],
+      'a1.w': ['LinkedIn post', 'პოსტი <span class="nw">LinkedIn-ზე</span>'],
+      'a2.w': ['Live app', 'მოქმედი აპი'],
+      'a3.t': ['Seminar at ComCom MediaLab', 'სემინარი ComCom <span class="nw">MediaLab-ში</span>'],
+      'a3.w': ['Video', 'ვიდეო'],
+      'a4.t': ['AI Pulse Georgia podcast', 'პოდკასტი AI Pulse Georgia']
+    };
+    var lang = root.getAttribute('lang') === 'ka' ? 'ka' : 'en';
+    var $ = function (s) { return document.querySelector(s); };
+    var all = function (s) { return [].slice.call(document.querySelectorAll(s)); };
+    function t(k) { var v = I[k]; return v ? v[lang === 'ka' ? 1 : 0] : ''; }
+
+    function setLang(l) {
+      lang = l;
+      root.setAttribute('lang', l);
+      all('[data-i]').forEach(function (el) { var v = I[el.getAttribute('data-i')]; if (v) el.innerHTML = v[l === 'ka' ? 1 : 0]; });
+      all('[data-ia]').forEach(function (el) {
+        el.getAttribute('data-ia').split(';').forEach(function (p) { var kv = p.split(':'); var v = I[kv[1]]; if (v) el.setAttribute(kv[0], v[l === 'ka' ? 1 : 0]); });
+      });
+      document.title = t('title');
+      var md = $('meta[name="description"]'); if (md) md.setAttribute('content', t('desc'));
+      var b = $('#lang');
+      b.setAttribute('aria-label', t('lang.btn')); b.setAttribute('title', t('lang.btn'));
+      b.setAttribute('lang', l === 'ka' ? 'en' : 'ka');
+    }
+
+    /* The photo follows the theme: the system setting picks the print by itself (the <source> media query); a
+       "#dark" or "#light" override re-points that source. */
+    var srcL = $('#pic-light');
+    function syncPic() {
+      var th = root.getAttribute('data-theme');
+      srcL.setAttribute('media', th === 'dark' ? 'not all' : th === 'light' ? 'all' : '(prefers-color-scheme: light)');
+      all('meta[name="theme-color"]').forEach(function (m, i) {
+        m.setAttribute('content', th === 'dark' ? '#131416' : th === 'light' ? '#E8E9EB' : (i === 0 ? '#131416' : '#E8E9EB'));
+      });
+    }
+    syncPic(); window.addEventListener('hashchange', syncPic);
+
+    if (lang === 'ka') setLang('ka');
+
+    /* Entrance: the print comes up first, like a stage light; the words follow, a beat apart. Only while the gate is
+       still up: on a slow connection the 1.2 s failsafe may already have shown the page, and fading it out to fade it
+       back in would be the very flash the gate exists to prevent. */
+    function enter() {
+      var gated = root.classList.contains('m-pre');
+      if (calm() && gated) {
+        M.animate('.pic', { opacity: [0, 1], transform: ['scale(1.012)', 'scale(1)'] }, { duration: 0.7, ease: EASE_OUT, delay: 0.04 });
+        M.animate(all('.name, .line, .links, .mail-row, .top, .also'),
+          { opacity: [0, 1], transform: ['translateY(6px)', 'translateY(0px)'] },
+          { duration: 0.56, ease: EASE_OUT, delay: M.stagger(0.045, { startDelay: 0.12 }) });
+      }
+      root.classList.remove('m-pre');
+    }
+    enter();
+
+    if (M) {
+      M.hover('.row', function (el) {
+        var a = el.querySelector('.arw');
+        if (!calm() || !a) return;
+        M.animate(a, { transform: 'translate(2px, -2px)' }, { type: 'spring', duration: 0.35, bounce: 0 });
+        return function () { M.animate(a, { transform: 'translate(0px, 0px)' }, { type: 'spring', duration: 0.4, bounce: 0 }); };
+      });
+      /* Press: the row or key dips to 0.985 and springs back. Two guards keep Motion from ever reading the resting
+         "transform: none", which it interpolates as scale(0): an inline scale(1) is seeded before the first press,
+         and the press keyframes start explicitly at scale(1). Without them a quick tap (released before the press
+         animation had drawn a frame) made the release spring start from almost nothing: measured in headless Chrome,
+         the key fell to scale 0.07 at 36 ms after a 0 ms tap and to 0.63 after a 40 ms hold, then grew back. With
+         them it stays between 0.985 and 1.0001, and a 0 ms tap does not move at all. */
+      M.press('.row, .copy, .lang', function (el) {
+        if (!calm()) return;
+        if (!el.style.transform) el.style.transform = 'scale(1)';
+        M.animate(el, { transform: ['scale(1)', 'scale(0.985)'] }, FIRM);
+        return function () { M.animate(el, { transform: 'scale(1)' }, SETTLE); };
+      });
+    }
+
+    var busy = 0;
+    $('#lang').addEventListener('click', function () {
+      var next = lang === 'ka' ? 'en' : 'ka', mine = ++busy;
+      /* The Copy key fades as a whole, not its two labels: its labels' own state ("Copy" or "Copied") is never
+         touched, so a switch during the 1.6 s hold can't show both at once, and the key's change of width between
+         the languages happens while it is out. */
+      var els = all('[data-i]:not(.cp-a):not(.cp-b), #lang, #copy');
+      function swapLang() {
+        setLang(next);
+        try { localStorage.setItem('lang', next); } catch (e) {}
+        try {
+          var u = new URL(location.href);
+          if (next === 'ka') u.searchParams.set('lang', 'ka'); else u.searchParams.delete('lang');
+          history.replaceState(null, '', u.pathname + u.search + u.hash);
+        } catch (e) {}
+      }
+      if (!calm()) { swapLang(); return; }
+      M.animate(els, { opacity: 0 }, { duration: 0.14, ease: EASE_IN }).then(function () {
+        if (mine !== busy) return;
+        swapLang();
+        M.animate(els, { opacity: [0, 1] }, { duration: 0.26, ease: EASE_OUT });
+      });
+    });
+
+    /* Copy: the clipboard API where it exists, the old execCommand route where it doesn't, and if both fail the
+       address is left selected so it can be copied by hand. */
+    var ADDR = 'contact@demetremildiani.com', btn = $('#copy'), A = btn.querySelector('.cp-a'), B = btn.querySelector('.cp-b'),
+        status = $('#copied'), hold;
+    function swap(out, inn) {
+      to(out, { opacity: 0, transform: 'translateY(-4px)' }, { duration: 0.18, ease: EASE_IN });
+      to(inn, { opacity: [0, 1], transform: ['translateY(4px)', 'translateY(0px)'] }, { duration: 0.26, ease: EASE_OUT, delay: 0.06 });
+    }
+    function done() {
+      if (!btn.classList.contains('on')) swap(A, B);
+      btn.classList.add('on'); status.textContent = t('copiedSr');
+      clearTimeout(hold);
+      hold = setTimeout(function () { swap(B, A); btn.classList.remove('on'); status.textContent = ''; }, 1600);
+    }
+    function fallback() {
+      var ok = false, ta = document.createElement('textarea');
+      ta.value = ADDR; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.top = '-200px'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+      if (ok) { done(); return; }
+      try { var r = document.createRange(); r.selectNodeContents($('#mail')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {}
+    }
+    btn.addEventListener('click', function () {
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(ADDR).then(done, fallback);
+      else fallback();
+    });
+  })();
+</script>
+</body>
+</html>
