@@ -71,6 +71,7 @@
     --rule: #26272B;
     --rule-hi: #3E3F44;
     --fg-row: #BFC1C6;      /* a step below white: 10.2:1 */
+    --raise: #1B1C1F;       /* the email card, one step off the stage */
     --ease: cubic-bezier(.22, 1, .36, 1);
     color-scheme: dark;
   }
@@ -78,7 +79,7 @@
      sitting, whose edges are the page tone and whose pool around the head is a few levels lighter; ink-black type. */
   :root[data-theme="light"] {
     --bg: #E8E9EB; --fg: #111214; --fg-2: #4E5157; --fg-3: #5F6268; --rule: #CDCED2; --rule-hi: #A9ABB0;
-    --fg-row: #3A3D42;
+    --fg-row: #3A3D42; --raise: #F3F4F5;
     color-scheme: light;
   }
 
@@ -147,25 +148,53 @@
   @media (hover: hover) { .ico:hover { color: var(--fg); } }
   .ico:focus-visible { color: var(--fg); outline-offset: 0; border-radius: 12px; }
 
-  /* The address, small and quiet under the marks. It is plain text, so a long press on a phone selects it (all of it
-     in one go), and the "Copy" beside it is a word, not a key: it says "Copied" for a moment after a tap.
-     The address itself sits on the centre axis, like everything above it; "Copy" hangs off its right edge. Three
-     columns, the outer two equal (1fr each, the left one empty), the right one never narrower than the word, so
-     nothing can run off the page. Where the two 1fr halves can't hold the word, which is a phone under 360 px, or
-     under 460 px for the longer Georgian word, "Copy" goes on its own line under the address, still on the axis.
-     Without JS there is no Copy and the address is centred. */
-  .addr { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(max-content, 1fr); align-items: center; margin: 4px 0 0; font-size: .875rem; color: var(--fg-2); }
-  .addr .mail { grid-column: 2; -webkit-user-select: all; user-select: all; overflow-wrap: anywhere; padding: 12px 0; }
-  .addr .copy { grid-column: 3; justify-self: start; }
-  @media (max-width: 359px) { .addr { grid-template-columns: 1fr; justify-items: center; } .addr .mail, .addr .copy { grid-column: 1; } .addr .copy { justify-self: center; margin-top: -10px; } }
-  @media (max-width: 459px) { :root[lang="ka"] .addr { grid-template-columns: 1fr; justify-items: center; } :root[lang="ka"] .addr .mail, :root[lang="ka"] .addr .copy { grid-column: 1; } :root[lang="ka"] .addr .copy { justify-self: center; margin-top: -10px; } }
-  .copy { display: none; }
-  .js .copy { display: inline-grid; min-height: 44px; min-width: 44px; padding: 0 12px; color: var(--fg-3); transition: color .22s var(--ease); }
-  .copy > span { grid-area: 1 / 1; place-self: center; white-space: nowrap; text-decoration: underline; text-decoration-color: var(--rule-hi); text-decoration-thickness: 1px; text-underline-offset: .3em; transition: text-decoration-color .22s var(--ease); }
+  /* The email (7 Oct, his ask: "a copy icon, not a copy button ... we have an email [icon], we don't need [the address
+     line] anymore"). The envelope in the row is the one way in. Without JS it is a plain mailto link. With JS a tap
+     opens a small quiet card just under the row, on the centre axis: the address (plain text, a long press selects all
+     of it), a copy mark (two overlapping sheets, drawn in stroke at the weight of the row's marks; it turns into a
+     tick for a moment after a tap) and "Open mail", the mailto. Not a modal: no overlay, nothing behind it dims, the
+     page does not move. It closes on Escape, on a tap anywhere else, and on a second tap of the envelope.
+     The card floats (absolute, under the row) so opening it shifts nothing. On a phone the address and the copy mark
+     share the first line and "Open mail" takes the second, under a hairline; from 600 px it is one line. */
+  .reach { position: relative; }
+  .pop {
+    position: absolute; z-index: 2; top: calc(100% + 8px); left: 0; right: 0; margin: 0 auto;
+    width: max-content; max-width: 100%;
+    display: grid; grid-template-columns: auto auto; align-items: center; justify-content: center;
+    padding: 0; border: 1px solid var(--rule-hi); border-radius: 14px;
+    background: var(--raise); color: var(--fg-2); font-size: .875rem;
+    box-shadow: 0 14px 32px -16px rgba(0, 0, 0, .7);
+  }
+  .pop[hidden] { display: none; }
+  /* A small notch on the card's top edge points at the envelope (the script sets --cx to the envelope's centre), and
+     the envelope stays at full ink while its card is open: that is what ties the two together. */
+  .pop::before {
+    content: ""; position: absolute; top: -6px; left: var(--cx, 50%); width: 10px; height: 10px; margin-left: -5px;
+    background: var(--raise); border: solid var(--rule-hi); border-width: 1px 0 0 1px; border-top-left-radius: 2px;
+    transform: rotate(45deg);
+  }
+  .ico[aria-expanded="true"] { color: var(--fg); }
+  .pop .mail { color: var(--fg-row); -webkit-user-select: all; user-select: all; overflow-wrap: anywhere; padding: 12px 0 12px 16px; }
+  .pop .copy {
+    display: inline-grid; place-items: center; width: 44px; height: 44px; margin-right: 2px; border-radius: 10px;
+    color: var(--fg-2); transition: color .22s var(--ease); -webkit-tap-highlight-color: transparent;
+  }
+  .pop .copy > span { grid-area: 1 / 1; display: block; }
+  .pop .copy svg { display: block; width: 18px; height: 18px; }
   .cp-b { opacity: 0; }
-  .js .copy.on { color: var(--fg); }
-  @media (hover: hover) { .js .copy:hover { color: var(--fg); } .copy:hover > span { text-decoration-color: currentColor; } }
-  .copy:focus-visible { outline-offset: -4px; }
+  .pop .copy.on { color: var(--fg); }
+  .pop .open {
+    grid-column: 1 / -1; justify-self: stretch; display: flex; align-items: center; justify-content: center;
+    min-height: 44px; padding: 0 16px; border-top: 1px solid var(--rule);
+    color: var(--fg-2); transition: color .22s var(--ease); white-space: nowrap;
+  }
+  .pop .open span { text-decoration: underline; text-decoration-color: var(--rule-hi); text-decoration-thickness: 1px; text-underline-offset: .3em; transition: text-decoration-color .22s var(--ease); }
+  @media (hover: hover) {
+    .pop .copy:hover, .pop .open:hover { color: var(--fg); }
+    .pop .open:hover span { text-decoration-color: currentColor; }
+  }
+  .pop .copy:focus-visible { outline-offset: -4px; border-radius: 10px; }
+  .pop .open:focus-visible { outline-offset: -4px; }
 
   /* Also: after the slide, small and grey. */
   .also { width: 100%; max-width: 34rem; margin: 40px auto 0; font-size: .875rem; }
@@ -188,7 +217,9 @@
     .icons { margin-top: 36px; gap: 10px; }
     .ico { width: 52px; height: 52px; }
     .ico svg { width: 24px; height: 24px; }
-    .addr { font-size: .9375rem; margin-top: 6px; }
+    .pop { grid-template-columns: auto auto auto; font-size: .9375rem; }
+    /* One line: "Open mail" after the copy mark, a short hairline between them; still 44 px tall to the finger. */
+    .pop .open { grid-column: auto; border-top: 0; padding: 0 18px 0 16px; background: linear-gradient(var(--rule-hi), var(--rule-hi)) left center / 1px 18px no-repeat; }
   }
 
   /* Desktop: the first screen is the slide, centred on both axes; the marks and the address close it on the centre
@@ -207,7 +238,6 @@
     .icons { margin-top: clamp(32px, 6vh, 56px); gap: 16px; }
     .ico { width: 56px; height: 56px; }
     .ico svg { width: 26px; height: 26px; }
-    .addr { margin-top: 8px; }
     .also { max-width: none; margin: -12px 0 0; display: flex; justify-content: center; align-items: baseline; gap: 4px 28px; flex-wrap: wrap; }
     .also h2 { margin: 0; }
     .also ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 28px; }
@@ -268,15 +298,19 @@
     <h1 class="name" data-enter><span>Demetre</span> <span>Mildiani</span></h1>
     <p class="line" data-enter>Operations since 2022.</p>
 
-    <ul class="icons" aria-label="Profiles and email" data-enter>
-      <li><a class="ico" rel="me" href="https://www.linkedin.com/in/demetre-mildiani/" lang="en" aria-label="LinkedIn"><svg viewBox="-1.5 -1.5 27 27" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></li>
-      <li><a class="ico" rel="me" href="https://www.facebook.com/demetre.mildiani/" lang="en" aria-label="Facebook"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg></a></li>
-      <li><a class="ico" rel="me" href="https://x.com/MildianiDemetre" lang="en" aria-label="X"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg></a></li>
-      <li><a class="ico" rel="me" href="https://www.producthunt.com/@demetre_mildiani1" lang="en" aria-label="Product Hunt"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M13.604 8.4h-3.405V12h3.405c.995 0 1.801-.806 1.801-1.801 0-.993-.805-1.799-1.801-1.799zM12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm1.604 14.4h-3.405V18H7.801V6h5.804c2.319 0 4.2 1.88 4.2 4.199 0 2.321-1.881 4.201-4.201 4.201z"/></svg></a></li>
-      <li><a class="ico" href="mailto:contact@demetremildiani.com" aria-label="Email Demetre"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M4 4h16a2.5 2.5 0 0 1 2.5 2.5v11a2.5 2.5 0 0 1-2.5 2.5H4a2.5 2.5 0 0 1-2.5-2.5v-11A2.5 2.5 0 0 1 4 4ZM4.1 6.9 12 12.2l7.9-5.3 1 1.5-8.9 6-8.9-6Z"/></svg></a></li>
-    </ul>
-
-    <p class="addr" data-enter><span class="mail" id="mail">contact@<wbr>demetremildiani.com</span><button class="copy" type="button" id="copy" aria-label="Copy email address"><span class="cp-a">Copy</span><span class="cp-b" aria-hidden="true">Copied</span></button><span class="sr" role="status" id="copied"></span></p>
+    <div class="reach">
+      <ul class="icons" aria-label="Profiles and email" data-enter>
+        <li><a class="ico" rel="me" href="https://www.linkedin.com/in/demetre-mildiani/" lang="en" aria-label="LinkedIn"><svg viewBox="-1.5 -1.5 27 27" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></li>
+        <li><a class="ico" rel="me" href="https://www.facebook.com/demetre.mildiani/" lang="en" aria-label="Facebook"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg></a></li>
+        <li><a class="ico" rel="me" href="https://x.com/MildianiDemetre" lang="en" aria-label="X"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg></a></li>
+        <li><a class="ico" rel="me" href="https://www.producthunt.com/@demetre_mildiani1" lang="en" aria-label="Product Hunt"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M13.604 8.4h-3.405V12h3.405c.995 0 1.801-.806 1.801-1.801 0-.993-.805-1.799-1.801-1.799zM12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm1.604 14.4h-3.405V18H7.801V6h5.804c2.319 0 4.2 1.88 4.2 4.199 0 2.321-1.881 4.201-4.201 4.201z"/></svg></a></li>
+        <li><a class="ico" id="mail-ico" href="mailto:contact@demetremildiani.com" aria-label="Email Demetre"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M4 4h16a2.5 2.5 0 0 1 2.5 2.5v11a2.5 2.5 0 0 1-2.5 2.5H4a2.5 2.5 0 0 1-2.5-2.5v-11A2.5 2.5 0 0 1 4 4ZM4.1 6.9 12 12.2l7.9-5.3 1 1.5-8.9 6-8.9-6Z"/></svg></a></li>
+      </ul>
+      <div class="pop" id="mail-pop" hidden>
+        <span class="mail" id="mail">contact@<wbr>demetremildiani.com</span><button class="copy" type="button" id="copy" aria-label="Copy email address" aria-describedby="mail"><span class="cp-a"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="8.5" width="12" height="12" rx="2.5"/><path d="M15.5 8.5V6A2.5 2.5 0 0 0 13 3.5H6A2.5 2.5 0 0 0 3.5 6v7A2.5 2.5 0 0 0 6 15.5h2.5"/></g></svg></span><span class="cp-b"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.5 9.5 17.5 19.5 7"/></svg></span></button><a class="open" href="mailto:contact@demetremildiani.com"><span>Open mail</span></a>
+      </div>
+    </div>
+    <span class="sr" role="status" id="copied"></span>
   </div>
 
   <section class="also" aria-labelledby="also-h" data-enter>
@@ -326,7 +360,7 @@
       var gated = root.classList.contains('m-pre');
       if (calm() && gated) {
         M.animate('.pic', { opacity: [0, 1], transform: ['scale(1.012)', 'scale(1)'] }, { duration: 0.7, ease: EASE_OUT, delay: 0.04 });
-        M.animate(all('.name, .line, .icons li, .addr, .top, .also'),
+        M.animate(all('.name, .line, .icons li, .top, .also'),
           { opacity: [0, 1], transform: ['translateY(6px)', 'translateY(0px)'] },
           { duration: 0.56, ease: EASE_OUT, delay: M.stagger(0.045, { startDelay: 0.12 }) });
       }
@@ -335,8 +369,8 @@
     enter();
 
     if (M) {
-      /* Press: a mark dips to 0.9 (it is small, so it needs the deeper dip to be seen), the Copy word and the flag to
-         0.985, and each springs back. Two guards keep Motion from ever reading the resting
+      /* Press: a mark (and the copy mark in the email card) dips to 0.9 (it is small, so it needs the deeper dip to be
+         seen), the flag to 0.985, and each springs back. Two guards keep Motion from ever reading the resting
          "transform: none", which it interpolates as scale(0): an inline scale(1) is seeded before the first press,
          and the press keyframes start explicitly at scale(1). Without them a quick tap (released before the press
          animation had drawn a frame) made the release spring start from almost nothing: measured in headless Chrome,
@@ -345,15 +379,16 @@
       M.press('.ico, .copy, .lang', function (el) {
         if (!calm()) return;
         if (!el.style.transform) el.style.transform = 'scale(1)';
-        M.animate(el, { transform: ['scale(1)', el.classList.contains('ico') ? 'scale(0.9)' : 'scale(0.985)'] }, FIRM);
+        M.animate(el, { transform: ['scale(1)', el.classList.contains('lang') ? 'scale(0.985)' : 'scale(0.9)'] }, FIRM);
         return function () { M.animate(el, { transform: 'scale(1)' }, SETTLE); };
       });
     }
 
     /* Copy: the clipboard API where it exists, the old execCommand route where it doesn't, and if both fail the
-       address is left selected so it can be copied by hand. */
+       address is left selected so it can be copied by hand. The copy mark turns into a tick for 1.6 s, and the live
+       region says so. */
     var ADDR = 'contact@demetremildiani.com', btn = $('#copy'), A = btn.querySelector('.cp-a'), B = btn.querySelector('.cp-b'),
-        status = $('#copied'), hold;
+        status = $('#copied'), hold, busy = false;
     function swap(out, inn) {
       to(out, { opacity: 0, transform: 'translateY(-4px)' }, { duration: 0.18, ease: EASE_IN });
       to(inn, { opacity: [0, 1], transform: ['translateY(4px)', 'translateY(0px)'] }, { duration: 0.26, ease: EASE_OUT, delay: 0.06 });
@@ -365,17 +400,53 @@
       hold = setTimeout(function () { swap(B, A); btn.classList.remove('on'); status.textContent = ''; }, 1600);
     }
     function fallback() {
-      var ok = false, ta = document.createElement('textarea');
+      /* The hidden textarea takes focus for a moment; "busy" keeps that from closing the card, and focus goes back. */
+      var ok = false, ta = document.createElement('textarea'), was = document.activeElement;
       ta.value = ADDR; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.top = '-200px'; ta.style.opacity = '0';
-      document.body.appendChild(ta); ta.select();
+      busy = true; document.body.appendChild(ta); ta.select();
       try { ok = document.execCommand('copy'); } catch (e) {}
-      document.body.removeChild(ta);
+      document.body.removeChild(ta); busy = false;
+      if (was && was.focus) try { was.focus({ preventScroll: true }); } catch (e) {}
       if (ok) { done(); return; }
       try { var r = document.createRange(); r.selectNodeContents($('#mail')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {}
     }
     btn.addEventListener('click', function () {
       if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(ADDR).then(done, fallback);
       else fallback();
+    });
+
+    /* The email card. In the HTML the envelope is a plain mailto link (the page without JS); here it becomes the card's
+       switch, a button to assistive tech, with aria-expanded and aria-controls. Opening moves focus to the copy mark;
+       closing gives it back to the envelope when it was inside the card. It closes on Escape, on a click or tap outside
+       it, on a second tap of the envelope, and when focus leaves it for somewhere else on the page. */
+    var ico = $('#mail-ico'), pop = $('#mail-pop'), tok = 0;
+    ico.setAttribute('role', 'button'); ico.setAttribute('aria-expanded', 'false'); ico.setAttribute('aria-controls', 'mail-pop');
+    function isOpen() { return ico.getAttribute('aria-expanded') === 'true'; }
+    function notch() {
+      var i = ico.getBoundingClientRect(), p = pop.getBoundingClientRect();
+      pop.style.setProperty('--cx', Math.max(18, Math.min(p.width - 18, i.left + i.width / 2 - p.left)) + 'px');
+    }
+    function show() {
+      tok++; pop.hidden = false; ico.setAttribute('aria-expanded', 'true'); notch();
+      to(pop, { opacity: [0, 1], transform: ['translateY(-4px)', 'translateY(0px)'] }, { duration: 0.22, ease: EASE_OUT });
+      try { btn.focus({ preventScroll: true }); } catch (e) { btn.focus(); }
+    }
+    function hide() {
+      if (!isOpen()) return;
+      var t = ++tok;
+      ico.setAttribute('aria-expanded', 'false');
+      if (pop.contains(document.activeElement)) try { ico.focus({ preventScroll: true }); } catch (e) { ico.focus(); }
+      to(pop, { opacity: 0, transform: 'translateY(-2px)' }, { duration: 0.14, ease: EASE_IN })
+        .then(function () { if (t === tok) pop.hidden = true; });
+    }
+    ico.addEventListener('click', function (e) { e.preventDefault(); if (isOpen()) hide(); else show(); });
+    ico.addEventListener('keydown', function (e) { if (e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); ico.click(); } });
+    document.addEventListener('keydown', function (e) { if ((e.key === 'Escape' || e.key === 'Esc') && isOpen()) hide(); });
+    window.addEventListener('resize', function () { if (isOpen()) notch(); });
+    document.addEventListener('click', function (e) { if (isOpen() && !pop.contains(e.target) && !ico.contains(e.target)) hide(); });
+    pop.addEventListener('focusout', function (e) {
+      var n = e.relatedTarget;
+      if (!busy && n && !pop.contains(n) && n !== ico) hide();
     });
   })();
 </script>
