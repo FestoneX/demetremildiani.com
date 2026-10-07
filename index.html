@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Demetre Mildiani</title>
-<meta name="description" content="Demetre Mildiani (დემეტრე მილდიანი). Operations since 2022. LinkedIn, Facebook, X, Product Hunt and email.">
+<meta name="description" content="Demetre Mildiani (დემეტრე მილდიანი). Startup operations since 2022. LinkedIn, Facebook, X, Product Hunt and email.">
 <link rel="canonical" href="https://demetremildiani.com/">
 <link rel="alternate" hreflang="en" href="https://demetremildiani.com/">
 <link rel="alternate" hreflang="ka" href="https://demetremildiani.com/ka/">
@@ -19,7 +19,7 @@
 <meta property="og:image:alt" content="Demetre Mildiani, smiling, in a dark zip-neck sweater">
 <meta name="twitter:image" content="https://demetremildiani.com/assets/img/demetre-mildiani-share.jpg">
 <meta property="og:title" content="Demetre Mildiani (დემეტრე მილდიანი)">
-<meta property="og:description" content="Operations since 2022. LinkedIn, Facebook, X, Product Hunt and email.">
+<meta property="og:description" content="Startup operations since 2022. LinkedIn, Facebook, X, Product Hunt and email.">
 <meta property="og:url" content="https://demetremildiani.com/">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="ka_GE">
@@ -34,7 +34,8 @@
      "?lang=en" to /; any other query and the hash ride along. The old "last choice" key is cleared.
      Motion gate (MOTION.md, pattern 0): only when JS runs and motion is allowed are the entrance blocks hidden, and a
      failsafe shows them after 1.2 s whatever happens. Once the failsafe has shown them, the entrance never runs: the
-     page script checks the gate is still up before it animates anything. */
+     page script checks the gate is still up before it animates anything. The 1200 ms is --gate-failsafe (this runs
+     before the stylesheet exists, so it keeps its own copy; build_dist.py checks the two match). */
   (function () {
     var d = document.documentElement; d.classList.add('js');
     function theme() { if (location.hash === '#light') d.setAttribute('data-theme', 'light'); else d.removeAttribute('data-theme'); }
@@ -68,39 +69,241 @@
      head, which is the seamless's photographed falloff, is the only glow on the page.
      Type: Switzer, light (300) at size; Noto Sans Georgian carries the Georgian.
      Theme: dark always, whatever the system asks (7 Oct). The day palette is kept for later; only "#light" in the
-     address turns it on, and nothing on the page links there. */
+     address turns it on, and nothing on the page links there.
+     The design system: DESIGN.md (rules) and docs/design-system.html (the living style guide, written by
+     build_dist.py from this file). */
+
+  /* ==== TOKENS ======================================================================================================
+     Every colour, size, space, radius, duration and layer on the page is a token here; the rules further down only
+     read tokens (no raw numbers but 0, 100%, auto and the like). Tokens change in five places only, all in this
+     block: the base, Georgian, the 600 px and 1000 px breakpoints, and the kept day theme. A component's layout may
+     switch at a breakpoint (the email card goes to one line from 600 px, Also to one line from 1000 px), but every
+     size it uses there is still a token; a component never tests the language.
+     Format (build_dist.py parses it for the style guide): one token per line, "--name: value;", an optional
+     comment after it on the same line. */
   :root {
-    --bg: #131416;          /* = the dark print's edge tone: the print melts into the stage on three sides */
-    --fg: #F2F2F4;          /* 16.5:1 */
-    --fg-2: #9A9CA2;        /* 6.7:1 */
-    --fg-3: #818389;        /* 4.9:1 */
-    --rule: #26272B;
-    --rule-hi: #3E3F44;
-    --fg-row: #BFC1C6;      /* a step below white: 10.2:1 */
-    --raise: #1B1C1F;       /* the email card, one step off the stage */
-    --ease: cubic-bezier(.22, 1, .36, 1);
+    /* Colour roles. Contrast ratios are against --bg. */
+    --bg: #131416;                 /* the stage; = the dark print's edge tone, so the print melts into it */
+    --surface: #1B1C1F;            /* a raised card (EmailCard, Tooltip): one step off the stage */
+    --ink: #F2F2F4;                /* 16.5:1. The name, and whatever is under the pointer, focused or open */
+    --ink-2: #BFC1C6;              /* 10.2:1. Words in a list or card: the address, the Also titles */
+    --ink-3: #9A9CA2;              /* 6.7:1. Resting marks, the grey line, card controls */
+    --ink-4: #818389;              /* 4.9:1. Labels ("Also") */
+    --hairline: #26272B;           /* rules between rows */
+    --hairline-strong: #3E3F44;    /* card borders, the flag ring, underlines */
+    --focus: var(--ink);           /* the keyboard ring */
+    --shadow-card: 0 14px 32px -16px rgba(0, 0, 0, .7);   /* the one shadow: under a raised card */
+
+    /* Type. Two families; one weight change (the name is light). */
+    --font-sans: "Switzer", "Noto Sans Georgian", system-ui, sans-serif;   /* everything */
+    --font-ka: "Noto Sans Georgian", sans-serif;   /* the Georgian name */
+    --weight-regular: 400;         /* everything but the name */
+    --weight-light: 300;           /* the name only */
+    --text-body: 1rem;             /* body */
+    --leading-body: 1.45;          /* running text */
+    --text-small: .875rem;         /* small: Also; label: "Also" in ink-4 */
+    --text-card: .875rem;          /* EmailCard and Tooltip text */
+    --leading-card: 1.45;          /* EmailCard and Tooltip text. No Georgian value: a card's text is Latin on both pages (the handle, the address), so a card is the same size on / and /ka/ */
+    --text-line: 1.0625rem;        /* line: the one sentence under the name */
+    --leading-line: 1.45;          /* the line */
+    --tracking-line: -.006em;      /* the line, a hair tight */
+    --font-name: var(--font-sans); /* the name's family: Switzer, or Noto Sans Georgian on /ka/ */
+    --text-name: clamp(2.125rem, 10.8vw, 2.75rem);   /* name: the one large thing */
+    --leading-name: 1.04;          /* the name, set solid */
+    --tracking-name: -.03em;       /* the name, tight */
+    --underline-offset: .3em;      /* an underlined link's line sits this far under the text */
+
+    /* Space. A closed set on a 2 px grid, named by size in px (as GitHub's Primer does). Use only these. */
+    --space-2: 2px;
+    --space-4: 4px;
+    --space-6: 6px;
+    --space-8: 8px;
+    --space-10: 10px;
+    --space-12: 12px;
+    --space-14: 14px;
+    --space-16: 16px;
+    --space-18: 18px;
+    --space-20: 20px;
+    --space-24: 24px;
+    --space-28: 28px;
+    --space-32: 32px;
+    --space-36: 36px;
+    --space-40: 40px;
+    --space-48: 48px;
+    --space-56: 56px;
+    --space-72: 72px;
+    --space-88: 88px;
+
+    /* Layout and rhythm: the stage, then the slide's gaps from top to bottom. */
+    --gutter: var(--space-16);     /* the stage's side padding */
+    --stage-floor: calc(var(--space-32) + env(safe-area-inset-bottom));   /* under Also */
+    --measure: 34rem;              /* the slide and Also */
+    --measure-slide: var(--measure);   /* the slide alone; wider on a desktop */
+    --measure-line: 24em;          /* the line wraps before this */
+    --slide-pad-top: var(--space-56); /* above the portrait */
+    --slide-pad-bottom: var(--space-8); /* under the marks */
+    --key-top: 0px;                /* the flag link's corner, from the top ... */
+    --key-right: var(--space-4);    /* ... and from the right */
+    --pic-w: clamp(124px, 37vw, 144px);   /* the portrait (keep the <img sizes> in step) */
+    --gap-pic-name: var(--space-18); /* portrait to name */
+    --gap-name-line: var(--space-8); /* name to line */
+    --gap-line-icons: var(--space-28); /* line to marks */
+    --gap-icons: var(--space-6);   /* between marks */
+    --gap-slide-also: var(--space-40); /* slide to Also (phone) */
+    --card-offset: var(--space-8);   /* from the row to a card under it */
+
+    /* Lines, rings, corners. */
+    --hairline-w: 1px;             /* every rule, border and ring */
+    --focus-w: 2px;                /* the keyboard ring's weight */
+    --focus-offset: 3px;           /* its gap from the thing (0 on an icon, -4px inside a card) */
+    --radius-hair: 2px;            /* the flag, the notch's tip */
+    --radius-focus: 3px;           /* the default focus ring */
+    --radius-control: 10px;        /* a control inside a card (copy) */
+    --radius-icon: 12px;           /* an icon link's focus ring */
+    --radius-card: 14px;           /* EmailCard, Tooltip */
+    --notch: 10px;                 /* the card's pointer, a rotated square */
+    --notch-inset: 18px;           /* the notch keeps this far from the card's ends */
+
+    /* Icons and targets. */
+    --icon: 22px;                  /* a profile mark */
+    --icon-target: 48px;           /* its square tap target */
+    --icon-sm: 18px;               /* a mark inside a card (copy, tick) */
+    --tap: 44px;                   /* the smallest target anywhere */
+    --flag-w: 20px;                /* both flags: one 4:3 frame (flag-icons' own shape) ... */
+    --flag-h: calc(var(--flag-w) * .75); /* ... 20 x 15 px */
+    --flag-rest: .88;              /* the flag's opacity at rest */
+
+    /* Motion (MOTION.md). The page script reads these too, so CSS and JS keep one set of numbers. Only opacity and
+       transform move; distances are tiny; nothing loops. */
+    --ease-out: cubic-bezier(.22, 1, .36, 1);   /* things arriving */
+    --ease-in: cubic-bezier(.4, 0, 1, 1);       /* things leaving */
+    --dur-hover: .22s;             /* colour on hover and focus (CSS) */
+    --dur-enter: .56s;             /* entrance, per block */
+    --dur-enter-pic: .7s;          /* the portrait comes up first, like a stage light */
+    --delay-pic: .04s;             /* before the portrait */
+    --delay-enter: .12s;           /* the words start after the portrait */
+    --stagger: .045s;              /* between entrance blocks */
+    --rise-enter: 6px;             /* entrance: blocks rise this far */
+    --scale-pic-from: 1.012;       /* the portrait settles from this scale */
+    --dur-open: .22s;              /* a card opening */
+    --rise-open: 4px;              /* a card drops this far into place */
+    --dur-close: .14s;             /* a card closing */
+    --rise-close: 2px;             /* and lifts this far on its way out */
+    --dur-in: .26s;                /* a label or mark swapping in (copy to tick) */
+    --dur-out: .18s;               /* ... and out */
+    --delay-in: .06s;              /* the tick starts after the copy mark leaves */
+    --rise-swap: 4px;              /* copy and tick move this far */
+    --hold-copied: 1.6s;           /* how long the tick stays */
+    --dur-press: .18s;             /* press down: a firm spring, no bounce */
+    --scale-press: .9;             /* an icon or the copy mark */
+    --scale-press-flag: .985;      /* the flag link */
+    --dur-settle: .45s;            /* release: a spring with a hint of bounce */
+    --bounce-settle: .15;          /* the hint of bounce */
+    --delay-tip: .3s;              /* Tooltip: a hover waits this long, so running the pointer along the row flashes nothing */
+    --gate-failsafe: 1.2s;         /* the head script shows the page by then whatever happens (it runs before CSS, so it keeps its own copy; the build checks they match) */
+
+    /* Layers. */
+    --z-key: 1;                    /* the flag link */
+    --z-card: 2;                   /* EmailCard, Tooltip (the card comes later in the page, so it covers a tip) */
+
     color-scheme: dark;
+  }
+  /* Georgian: its own sizes, leading and no tracking (Noto Sans Georgian is wider, taller and has no capitals).
+     Never uppercase, never letter-spaced. The root selector outranks the breakpoints' plain :root, so a Georgian value
+     holds until a Georgian breakpoint changes it; [lang="ka"] alone lets a Georgian block inside an English page (the
+     style guide) take the same values. */
+  :root[lang="ka"], [lang="ka"] {
+    --leading-body: 1.55;
+    --font-name: var(--font-ka);
+    --text-name: clamp(1.625rem, 8vw, 2.125rem);
+    --leading-name: 1.28;
+    --tracking-name: 0;
+    --text-line: .9375rem;
+    --leading-line: 1.55;
+    --tracking-line: 0;
+    --measure-line: 32em;          /* Georgian words run longer: the line keeps to one line from 600 px */
+    --gap-name-line: var(--space-6);
+  }
+  @media (min-width: 600px) {
+    :root {
+      --gutter: var(--space-32);
+      --stage-floor: var(--space-40);
+      --slide-pad-top: var(--space-88);
+      --slide-pad-bottom: var(--space-24);
+      --key-top: var(--space-12);
+      --key-right: var(--space-20);
+      --pic-w: 168px;
+      --gap-pic-name: var(--space-28);
+      --gap-name-line: var(--space-10);
+      --gap-line-icons: var(--space-36);
+      --gap-icons: var(--space-10);
+      --icon-target: 52px;
+      --icon: 24px;
+      --text-name: 3.5rem;
+      --text-line: 1.1875rem;
+      --text-card: .9375rem;
+    }
+    :root[lang="ka"], [lang="ka"] {
+      --text-name: 2.625rem;
+      --text-line: 1.0625rem;
+    }
+  }
+  /* Sizes and gaps follow the screen's height as well as its width, so the whole slide stays on the first screen from
+     a 1280 x 720 laptop to a 1920 x 1080 monitor. */
+  @media (min-width: 1000px) {
+    :root {
+      --gutter: var(--space-48);
+      --stage-floor: var(--space-18);   /* 30 px to the floor line's text, as the 44 px links keep 12 px under it */
+      --measure-slide: 60rem;
+      --slide-pad-top: clamp(var(--space-40), 7vh, var(--space-72));
+      --slide-pad-bottom: clamp(var(--space-28), 5vh, var(--space-56));
+      --key-top: var(--space-20);
+      --key-right: var(--space-36);
+      --pic-w: clamp(156px, 23vh, 240px);
+      --gap-pic-name: clamp(22px, 3.6vh, var(--space-36));
+      --gap-name-line: var(--space-14);
+      --gap-line-icons: clamp(var(--space-32), 6vh, var(--space-56));
+      --gap-icons: var(--space-16);
+      --icon-target: 56px;
+      --icon: 26px;
+      --text-name: clamp(4rem, min(5.8vw, 9.6vh), 5.75rem);
+      --leading-name: 1;
+      --tracking-name: -.036em;
+      --text-line: 1.375rem;
+    }
+    :root[lang="ka"], [lang="ka"] {
+      --text-name: clamp(2.875rem, min(4.2vw, 7vh), 4.125rem);
+      --leading-name: 1.2;
+      --text-line: 1.1875rem;
+      --gap-name-line: var(--space-10);
+    }
   }
   /* Day, kept for later: the same stage with the house lights up. A cool studio grey, the light print of the same
      sitting, whose edges are the page tone and whose pool around the head is a few levels lighter; ink-black type. */
   :root[data-theme="light"] {
-    --bg: #E8E9EB; --fg: #111214; --fg-2: #4E5157; --fg-3: #5F6268; --rule: #CDCED2; --rule-hi: #A9ABB0;
-    --fg-row: #3A3D42; --raise: #F3F4F5;
+    --bg: #E8E9EB;
+    --surface: #F3F4F5;
+    --ink: #111214;
+    --ink-2: #3A3D42;
+    --ink-3: #4E5157;
+    --ink-4: #5F6268;
+    --hairline: #CDCED2;
+    --hairline-strong: #A9ABB0;
     color-scheme: light;
   }
+  /* ==== END TOKENS ================================================================================================== */
 
   *, *::before, *::after { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--bg); }
   body {
-    margin: 0; background: var(--bg); color: var(--fg);
-    font: 400 1rem/1.45 "Switzer", "Noto Sans Georgian", system-ui, sans-serif;
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: var(--weight-regular) var(--text-body)/var(--leading-body) var(--font-sans);
     -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-wrap: break-word;
     font-feature-settings: "kern" 1;
   }
-  :root[lang="ka"] body { line-height: 1.55; }
   a { color: inherit; text-decoration: none; }
   button { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; }
-  :focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radius: 3px; }
+  :focus-visible { outline: var(--focus-w) solid var(--focus); outline-offset: var(--focus-offset); border-radius: var(--radius-focus); }
   .nw { white-space: nowrap; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
   .m-pre [data-enter] { opacity: 0; }
@@ -109,52 +312,57 @@
   .stage {
     position: relative; min-height: 100vh; min-height: 100svh;
     display: flex; flex-direction: column;
-    padding: 0 16px calc(32px + env(safe-area-inset-bottom));
+    padding: 0 var(--gutter) var(--stage-floor);
   }
   /* The slide sits in the middle of the first screen, "Also" on the floor under it. */
-  .slide { width: 100%; max-width: 34rem; margin: auto; padding: 56px 0 8px; }
+  .slide { width: 100%; max-width: var(--measure-slide); margin: auto; padding: var(--slide-pad-top) 0 var(--slide-pad-bottom); }
 
-  /* The language key: a small flag in the top corner, outside the composition, linking to the other language's
-     page (6 Oct: a flag, not a word; 7 Oct: a real link to /ka/ and back). */
-  .top { position: absolute; top: 0; right: 4px; z-index: 1; }
+  /* FlagLink. The language key: a small flag in the top corner, outside the composition, linking to the other
+     language's page (6 Oct: a flag, not a word; 7 Oct: a real link to /ka/ and back). */
+  .top { position: absolute; top: var(--key-top); right: var(--key-right); z-index: var(--z-key); }
+  /* The target is one hairline taller than --tap (45 px), so the 15 px flag centres on whole pixels: in a 44 px box it
+     sat at 14.5 px and its top and bottom edges blurred on a 1x screen. */
   .lang {
-    display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; padding: 0 12px;
-    font-size: .875rem; color: var(--fg-2); transition: color .22s var(--ease);
+    display: inline-flex; align-items: center; min-height: calc(var(--tap) + var(--hairline-w)); min-width: var(--tap); padding: 0 var(--space-12);
   }
-  /* A hairline ring keeps the white of both flags on the light page. */
-  .lang .flag { display: block; height: 15px; width: auto; border-radius: 2px; box-shadow: 0 0 0 1px var(--rule-hi); opacity: .88; transition: opacity .22s var(--ease); }
+  /* Both flags are one component (7 Oct, his ask: "Georgian emoji and USA emoji look different, please use the same
+     components"): both are drawn by one open set, lipis/flag-icons 7.5.0 (MIT, vendor/flag-icons/), in its 4:3 frame,
+     and here they get the same 20 x 15 box, the same corner, the same hairline ring (which also keeps the white of
+     both flags on the light page), the same resting opacity and the same place. */
+  .lang .flag { display: block; width: var(--flag-w); height: var(--flag-h); overflow: hidden; border-radius: var(--radius-hair); box-shadow: 0 0 0 var(--hairline-w) var(--hairline-strong); opacity: var(--flag-rest); transition: opacity var(--dur-hover) var(--ease-out); }
   @media (hover: hover) { .lang:hover .flag { opacity: 1; } }
 
-  /* The portrait: a hard-edged 4:5 print on the centre axis. No frame, no shadow: the backdrop's edges are the
+  /* Portrait: a hard-edged 4:5 print on the centre axis. No frame, no shadow: the backdrop's edges are the
      page's own tone, so only the sweater's cut at the bottom draws an edge, and the pool of light around his head is
      in the photograph. */
-  .pic { margin: 0 auto; width: clamp(124px, 37vw, 144px); aspect-ratio: 4 / 5; background: var(--bg); }
+  .pic { margin: 0 auto; width: var(--pic-w); aspect-ratio: 4 / 5; background: var(--bg); }
   .pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
-  /* The one large thing: the name, light, tight. Only the name is full white. */
+  /* Name: the one large thing, light, tight. Only the name is full white. Line: one grey sentence. */
   .name {
-    margin: 18px 0 0; text-align: center;
-    font-weight: 300; font-size: clamp(2.125rem, 10.8vw, 2.75rem); line-height: 1.04; letter-spacing: -.03em;
+    margin: var(--gap-pic-name) 0 0; text-align: center; font-family: var(--font-name);
+    font-weight: var(--weight-light); font-size: var(--text-name); line-height: var(--leading-name); letter-spacing: var(--tracking-name);
   }
-  :root[lang="ka"] .name { font-family: "Noto Sans Georgian", sans-serif; font-size: clamp(1.625rem, 8vw, 2.125rem); line-height: 1.28; letter-spacing: 0; }
-  .line { margin: 8px auto 0; max-width: 24em; text-align: center; color: var(--fg-2); font-size: 1.0625rem; letter-spacing: -.006em; text-wrap: balance; }
-  :root[lang="ka"] .line { margin-top: 6px; font-size: .9375rem; line-height: 1.55; letter-spacing: 0; }
+  .line {
+    margin: var(--gap-name-line) auto 0; max-width: var(--measure-line); text-align: center; color: var(--ink-3);
+    font-size: var(--text-line); line-height: var(--leading-line); letter-spacing: var(--tracking-line); text-wrap: balance;
+  }
 
-  /* The profiles and email: one row of monochrome marks (7 Oct, his ask: "icons instead of LinkedIn ... black and
-     white type icons"), in the order he named them: LinkedIn, Facebook, X, Product Hunt, then email. The four brand
-     marks are Simple Icons (CC0), the envelope is drawn for the page, filled like them. They rest in
-     the muted grey and come up to full ink under the pointer and on focus; never a brand colour, no circles, no
-     pills. Each target is 48 px square on a phone (the glyph 22 px), so a thumb has room between them. */
-  .icons { list-style: none; margin: 28px 0 0; padding: 0; display: flex; justify-content: center; gap: 6px; }
+  /* IconLink. The profiles and email: one row of monochrome marks (7 Oct, his ask: "icons instead of LinkedIn ...
+     black and white type icons"), in the order he named them: LinkedIn, Facebook, X, Product Hunt, then email. The
+     four brand marks are Simple Icons (CC0), the envelope is drawn for the page, filled like them. They rest in the
+     muted grey and come up to full ink under the pointer and on focus; never a brand colour, no circles, no pills.
+     Each target is a square (48 px on a phone, the glyph 22 px), so a thumb has room between them. */
+  .icons { list-style: none; margin: var(--gap-line-icons) 0 0; padding: 0; display: flex; justify-content: center; gap: var(--gap-icons); }
   .ico {
-    display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px;
-    color: var(--fg-2); transition: color .22s var(--ease); -webkit-tap-highlight-color: transparent;
+    display: grid; place-items: center; width: var(--icon-target); height: var(--icon-target); border-radius: var(--radius-icon);
+    color: var(--ink-3); transition: color var(--dur-hover) var(--ease-out); -webkit-tap-highlight-color: transparent;
   }
-  .ico svg { display: block; width: 22px; height: 22px; }
-  @media (hover: hover) { .ico:hover { color: var(--fg); } }
-  .ico:focus-visible { color: var(--fg); outline-offset: 0; border-radius: 12px; }
+  .ico svg { display: block; width: var(--icon); height: var(--icon); }
+  @media (hover: hover) { .ico:hover { color: var(--ink); } }
+  .ico:focus-visible { color: var(--ink); outline-offset: 0; border-radius: var(--radius-icon); }
 
-  /* The email (7 Oct, his ask: "a copy icon, not a copy button ... we have an email [icon], we don't need [the address
+  /* EmailCard (7 Oct, his ask: "a copy icon, not a copy button ... we have an email [icon], we don't need [the address
      line] anymore"). The envelope in the row is the one way in. Without JS it is a plain mailto link. With JS a tap
      opens a small quiet card just under the row, on the centre axis: the address (plain text, a long press selects all
      of it), a copy mark (two overlapping sheets, drawn in stroke at the weight of the row's marks; it turns into a
@@ -164,93 +372,116 @@
      share the first line and "Open mail" takes the second, under a hairline; from 600 px it is one line. */
   .reach { position: relative; }
   .pop {
-    position: absolute; z-index: 2; top: calc(100% + 8px); left: 0; right: 0; margin: 0 auto;
+    position: absolute; z-index: var(--z-card); top: calc(100% + var(--card-offset)); left: 0; right: 0; margin: 0 auto;
     width: max-content; max-width: 100%;
     display: grid; grid-template-columns: auto auto; align-items: center; justify-content: center;
-    padding: 0; border: 1px solid var(--rule-hi); border-radius: 14px;
-    background: var(--raise); color: var(--fg-2); font-size: .875rem;
-    box-shadow: 0 14px 32px -16px rgba(0, 0, 0, .7);
+    padding: 0; border: var(--hairline-w) solid var(--hairline-strong); border-radius: var(--radius-card);
+    background: var(--surface); color: var(--ink-3); font-size: var(--text-card); line-height: var(--leading-card);
+    box-shadow: var(--shadow-card);
   }
   .pop[hidden] { display: none; }
   /* A small notch on the card's top edge points at the envelope (the script sets --cx to the envelope's centre), and
      the envelope stays at full ink while its card is open: that is what ties the two together. */
   .pop::before {
-    content: ""; position: absolute; top: -6px; left: var(--cx, 50%); width: 10px; height: 10px; margin-left: -5px;
-    background: var(--raise); border: solid var(--rule-hi); border-width: 1px 0 0 1px; border-top-left-radius: 2px;
+    content: ""; position: absolute; top: calc(var(--notch) / -2 - var(--hairline-w)); left: var(--cx, 50%);
+    width: var(--notch); height: var(--notch); margin-left: calc(var(--notch) / -2);
+    background: var(--surface); border: solid var(--hairline-strong); border-width: var(--hairline-w) 0 0 var(--hairline-w); border-top-left-radius: var(--radius-hair);
     transform: rotate(45deg);
   }
-  .ico[aria-expanded="true"] { color: var(--fg); }
-  .pop .mail { color: var(--fg-row); -webkit-user-select: all; user-select: all; overflow-wrap: anywhere; padding: 12px 0 12px 16px; }
+  .ico[aria-expanded="true"] { color: var(--ink); }
+  .pop .mail { color: var(--ink-2); -webkit-user-select: all; user-select: all; overflow-wrap: anywhere; padding: var(--space-12) 0 var(--space-12) var(--space-16); }
   .pop .copy {
-    display: inline-grid; place-items: center; width: 44px; height: 44px; margin-right: 2px; border-radius: 10px;
-    color: var(--fg-2); transition: color .22s var(--ease); -webkit-tap-highlight-color: transparent;
+    display: inline-grid; place-items: center; width: var(--tap); height: var(--tap); margin-right: var(--space-2); border-radius: var(--radius-control);
+    color: var(--ink-3); transition: color var(--dur-hover) var(--ease-out); -webkit-tap-highlight-color: transparent;
   }
   .pop .copy > span { grid-area: 1 / 1; display: block; }
-  .pop .copy svg { display: block; width: 18px; height: 18px; }
+  .pop .copy svg { display: block; width: var(--icon-sm); height: var(--icon-sm); }
   .cp-b { opacity: 0; }
-  .pop .copy.on { color: var(--fg); }
+  .pop .copy[data-state="copied"] { color: var(--ink); }
   .pop .open {
     grid-column: 1 / -1; justify-self: stretch; display: flex; align-items: center; justify-content: center;
-    min-height: 44px; padding: 0 16px; border-top: 1px solid var(--rule);
-    color: var(--fg-2); transition: color .22s var(--ease); white-space: nowrap;
+    min-height: var(--tap); padding: 0 var(--space-16); border-top: var(--hairline-w) solid var(--hairline);
+    color: var(--ink-3); transition: color var(--dur-hover) var(--ease-out); white-space: nowrap;
   }
-  .pop .open span { text-decoration: underline; text-decoration-color: var(--rule-hi); text-decoration-thickness: 1px; text-underline-offset: .3em; transition: text-decoration-color .22s var(--ease); }
+  .pop .open span { text-decoration: underline; text-decoration-color: var(--hairline-strong); text-decoration-thickness: var(--hairline-w); text-underline-offset: var(--underline-offset); transition: text-decoration-color var(--dur-hover) var(--ease-out); }
   @media (hover: hover) {
-    .pop .copy:hover, .pop .open:hover { color: var(--fg); }
+    .pop .copy:hover, .pop .open:hover { color: var(--ink); }
     .pop .open:hover span { text-decoration-color: currentColor; }
   }
-  .pop .copy:focus-visible { outline-offset: -4px; border-radius: 10px; }
-  .pop .open:focus-visible { outline-offset: -4px; }
+  .pop .copy:focus-visible { outline-offset: calc(var(--space-4) * -1); border-radius: var(--radius-control); }
+  .pop .open:focus-visible { outline-offset: calc(var(--space-4) * -1); }
 
-  /* Also: after the slide, small and grey. */
-  .also { width: 100%; max-width: 34rem; margin: 40px auto 0; font-size: .875rem; }
-  .also h2 { margin: 0 0 4px; font: inherit; color: var(--fg-3); }
+  /* Tooltip (7 Oct, his ask: "should we have the same [pop-up] for each link?"; Claude's recommendation, taken: a
+     label, not a card, because a profile has one action and a tap should go straight there). Under each profile mark,
+     the handle the link goes to, in the EmailCard's material and motion: the same surface, strong hairline, corner,
+     shadow, notch and offset, dropping in by --rise-open over --dur-open and leaving over --dur-close. One line, in
+     --text-card and --ink-2.
+     When: on hover after --delay-tip, and only with a fine pointer (a mouse or trackpad: never on touch, where a tap
+     must just follow the link); at once on keyboard focus (:focus-visible, so a tap never shows it). Never while the
+     email card is open (and the card, later in the page at the same layer, would cover one anyway).
+     WCAG 1.4.13: the tip is part of its host, so the pointer can move onto it across the bridge (::after) without
+     losing it; Escape hides it (the page script sets data-state="dismissed" until the pointer or focus leaves); it holds
+     nothing focusable, so focus never stops in it. The link names it with aria-describedby: a screen reader says
+     "LinkedIn, link, in/demetre-mildiani".
+     On screen: the tip is centred under its mark, and the page script slides it sideways (--tip-dx) when that would
+     take it closer than --gutter to the window's edge (LinkedIn's, at 320 px or a laptop at 400% zoom), and sets --cx
+     so the notch stays over the mark, as the EmailCard's notch does. Without JS it stays centred. */
+  .tip-host { position: relative; z-index: var(--z-card); }
+  .tip {
+    position: absolute; top: calc(100% + var(--card-offset)); left: calc(50% + var(--tip-dx, 0px));
+    width: max-content; padding: var(--space-8) var(--space-14); white-space: nowrap; pointer-events: none;
+    border: var(--hairline-w) solid var(--hairline-strong); border-radius: var(--radius-card);
+    background: var(--surface); color: var(--ink-2); font-size: var(--text-card); line-height: var(--leading-card);
+    box-shadow: var(--shadow-card);
+    opacity: 0; visibility: hidden; transform: translate(-50%, calc(var(--rise-open) * -1));
+    transition: opacity var(--dur-close) var(--ease-in), transform var(--dur-close) var(--ease-in), visibility 0s linear var(--dur-close);
+  }
+  .tip::before {
+    content: ""; position: absolute; top: calc(var(--notch) / -2 - var(--hairline-w)); left: var(--cx, 50%);
+    width: var(--notch); height: var(--notch); margin-left: calc(var(--notch) / -2);
+    background: var(--surface); border: solid var(--hairline-strong); border-width: var(--hairline-w) 0 0 var(--hairline-w); border-top-left-radius: var(--radius-hair);
+    transform: rotate(45deg);
+  }
+  .tip::after { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: calc(var(--card-offset) + var(--hairline-w)); }
+  @media (hover: hover) and (pointer: fine) {
+    .tip-host:hover .tip {
+      opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, 0);
+      transition: opacity var(--dur-open) var(--ease-out) var(--delay-tip), transform var(--dur-open) var(--ease-out) var(--delay-tip), visibility 0s linear var(--delay-tip);
+    }
+  }
+  .ico:focus-visible + .tip {
+    opacity: 1; visibility: visible; transform: translate(-50%, 0);
+    transition: opacity var(--dur-open) var(--ease-out), transform var(--dur-open) var(--ease-out), visibility 0s;
+  }
+  .tip-host[data-state="dismissed"] .tip, .icons:has([aria-expanded="true"]) .tip { opacity: 0; visibility: hidden; pointer-events: none; transition: none; }
+
+  /* AlsoList: after the slide, small and grey. The row padding is 12 px less the hairline above it, so the text
+     keeps its baseline inside the 44 px row. */
+  .also { width: 100%; max-width: var(--measure); margin: var(--gap-slide-also) auto 0; font-size: var(--text-small); }
+  .also h2 { margin: 0 0 var(--space-4); font: inherit; color: var(--ink-4); }
   .also ul { list-style: none; margin: 0; padding: 0; }
-  .also a { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 12px; align-items: baseline; min-height: 44px; padding: 11px 0; border-top: 1px solid var(--rule); }
-  .also .t { color: var(--fg-row); }
-  .also .w { color: var(--fg-2); }
-  @media (hover: hover) { .also a:hover .t { color: var(--fg); } }
+  .also a { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 var(--space-12); align-items: baseline; min-height: var(--tap); padding: calc(var(--space-12) - var(--hairline-w)) 0; border-top: var(--hairline-w) solid var(--hairline); }
+  .also .t { color: var(--ink-2); }
+  .also .w { color: var(--ink-3); }
+  @media (hover: hover) { .also a:hover .t { color: var(--ink); } }
 
   @media (min-width: 600px) {
-    .stage { padding: 0 32px 40px; }
-    .top { right: 20px; top: 12px; }
-    .slide { padding: 88px 0 24px; }
-    .pic { width: 168px; }
-    .name { font-size: 3.5rem; margin-top: 28px; }
-    :root[lang="ka"] .name { font-size: 2.625rem; }
-    .line { font-size: 1.1875rem; margin-top: 10px; }
-    :root[lang="ka"] .line { font-size: 1.0625rem; }
-    .icons { margin-top: 36px; gap: 10px; }
-    .ico { width: 52px; height: 52px; }
-    .ico svg { width: 24px; height: 24px; }
-    .pop { grid-template-columns: auto auto auto; font-size: .9375rem; }
-    /* One line: "Open mail" after the copy mark, a short hairline between them; still 44 px tall to the finger. */
-    .pop .open { grid-column: auto; border-top: 0; padding: 0 18px 0 16px; background: linear-gradient(var(--rule-hi), var(--rule-hi)) left center / 1px 18px no-repeat; }
+    .pop { grid-template-columns: auto auto auto; }
+    /* One line: "Open mail" after the copy mark, a short hairline between them (a solid 1 px line drawn as a
+       background, not a gradient); still 44 px tall to the finger. */
+    .pop .open { grid-column: auto; border-top: 0; padding: 0 var(--space-18) 0 var(--space-16); background: linear-gradient(var(--hairline-strong), var(--hairline-strong)) left center / var(--hairline-w) var(--space-18) no-repeat; }
   }
 
-  /* Desktop: the first screen is the slide, centred on both axes; the marks and the address close it on the centre
-     axis; "Also" is a quiet line on the stage floor. */
+  /* Desktop: the first screen is the slide, centred on both axes; the marks close it on the centre axis; "Also" is a
+     quiet line on the stage floor. */
   @media (min-width: 1000px) {
-    .stage { padding: 0 48px 18px; }   /* 30 px to the floor line's text, as the 44 px links keep 12 px under it */
-    /* Sizes and gaps follow the screen's height as well as its width, so the whole slide, address included, stays on
-       the first screen from a 1280 x 720 laptop to a 1920 x 1080 monitor. */
-    .slide { max-width: 60rem; margin: auto; padding: clamp(40px, 7vh, 72px) 0 clamp(28px, 5vh, 56px); }
-    .top { right: 36px; top: 20px; }
-    .pic { width: clamp(156px, 23vh, 240px); margin-top: 0; }
-    .name { font-size: clamp(4rem, min(5.8vw, 9.6vh), 5.75rem); margin-top: clamp(22px, 3.6vh, 36px); letter-spacing: -.036em; line-height: 1; }
-    :root[lang="ka"] .name { font-size: clamp(2.875rem, min(4.2vw, 7vh), 4.125rem); line-height: 1.2; }
-    .line { font-size: 1.375rem; margin-top: 14px; }
-    :root[lang="ka"] .line { font-size: 1.1875rem; margin-top: 10px; }
-    .icons { margin-top: clamp(32px, 6vh, 56px); gap: 16px; }
-    .ico { width: 56px; height: 56px; }
-    .ico svg { width: 26px; height: 26px; }
-    .also { max-width: none; margin: -12px 0 0; display: flex; justify-content: center; align-items: baseline; gap: 4px 28px; flex-wrap: wrap; }
+    .also { max-width: none; margin: calc(var(--space-12) * -1) 0 0; display: flex; justify-content: center; align-items: baseline; gap: var(--space-4) var(--space-28); flex-wrap: wrap; }
     .also h2 { margin: 0; }
-    .also ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 28px; }
+    .also ul { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4) var(--space-28); }
     /* Still 44 px tall to the finger (an iPad in landscape is a touch screen at desktop width); the text sits on the
        same baseline as before, and the stage's bottom padding gives back the extra height. */
-    .also a { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border: 0; }
-    .also .t { color: var(--fg-2); transition: color .22s var(--ease); }
+    .also a { display: inline-flex; align-items: center; min-height: var(--tap); padding: 0; border: 0; }
+    .also .t { color: var(--ink-3); transition: color var(--dur-hover) var(--ease-out); }
     .also .w { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
     .also li { position: relative; }
   }
@@ -268,6 +499,7 @@
   "alternateName": "დემეტრე მილდიანი",
   "givenName": "Demetre",
   "familyName": "Mildiani",
+  "description": "Startup operations since 2022.",
   "url": "https://demetremildiani.com/",
   "image": "https://demetremildiani.com/assets/img/demetre-mildiani.jpg",
   "email": "mailto:contact@demetremildiani.com",
@@ -290,7 +522,7 @@
 </head>
 <body>
 <main class="stage">
-  <div class="top" data-enter><a class="lang" id="lang" href="/ka/" hreflang="ka" lang="ka" aria-label="ქართულად" title="ქართულად"><svg class="flag flag-ge" viewBox="0 0 300 200" width="30" height="20" aria-hidden="true" focusable="false"><path fill="#FFFFFF" d="M0 0h300v200H0z"/><path fill="#DA291C" d="M130 0h40v200h-40zM0 80h300v40H0zM61.8 36.8L58 19L72 19L68.2 36.8L86 33L86 47L68.2 43.2L72 61L58 61L61.8 43.2L44 47L44 33zM231.8 36.8L228 19L242 19L238.2 36.8L256 33L256 47L238.2 43.2L242 61L228 61L231.8 43.2L214 47L214 33zM61.8 156.8L58 139L72 139L68.2 156.8L86 153L86 167L68.2 163.2L72 181L58 181L61.8 163.2L44 167L44 153zM231.8 156.8L228 139L242 139L238.2 156.8L256 153L256 167L238.2 163.2L242 181L228 181L231.8 163.2L214 167L214 153z"/></svg></a></div>
+  <div class="top" data-enter><a class="lang" id="lang" href="/ka/" hreflang="ka" lang="ka" aria-label="ქართულად"><!-- flag-icons 7.5.0, MIT --><svg class="flag flag-ge" viewBox="0 0 640 480" width="20" height="15" aria-hidden="true" focusable="false"><path fill="#fff" d="M0 0h640v480H0z"/><path fill="red" d="M272 0h96v480h-96z"/><path fill="red" d="M0 192h640v96H0z"/><path fill="red" fill-rule="evenodd" d="M146.8 373.1c1-16.8 4-31.1 4-31.1s-9.8 1-14.8 1-14.8-1-14.8-1 3 14.3 4 31.2c-16.9-1-31.2-4-31.2-4s1 7.4 1 14.8-1 14.8-1 14.8 14.3-3 31.2-4c-1 16.9-4 31.2-4 31.2s7.4-1 14.8-1 14.8 1 14.8 1-3-14.3-4-31.2c16.9 1 31.2 4 31.2 4s-1-9.8-1-14.8 1-14.8 1-14.8-14.3 3-31.1 4zm368-288c1-16.8 4-31.1 4-31.1s-9.8 1-14.8 1-14.8-1-14.8-1 3 14.3 4 31.1c-16.9-1-31.2-3.9-31.2-3.9s1 7.4 1 14.8-1 14.8-1 14.8 14.3-3 31.2-4c-1 16.9-4 31.2-4 31.2s7.4-1 14.8-1 14.8 1 14.8 1-3-14.3-4-31.1c16.9 1 31.2 4 31.2 4s-1-10-1-14.9 1-14.8 1-14.8-14.3 3-31.2 4zm-368 0c1-16.8 4-31.1 4-31.1s-9.8 1-14.8 1-14.8-1-14.8-1 3 14.3 4 31.2c-16.9-1-31.2-4-31.2-4s1 7.4 1 14.8-1 14.8-1 14.8 14.3-3 31.2-4c-1 16.9-4 31.2-4 31.2s7.4-1 14.8-1 14.8 1 14.8 1-3-14.3-4-31.2c16.9 1 31.2 4 31.2 4s-1-9.8-1-14.8 1-14.8 1-14.8-14.3 3-31.1 4zm368 288c1-16.8 4-31.1 4-31.1s-9.8 1-14.8 1-14.8-1-14.8-1 3 14.3 4 31.2c-16.9-1-31.2-4-31.2-4s1 7.4 1 14.8-1 14.8-1 14.8 14.3-3 31.2-4c-1 16.9-4 31.2-4 31.2s7.4-1 14.8-1 14.8 1 14.8 1-3-14.3-4-31.2c16.9 1 31.2 4 31.2 4s-1-9.8-1-14.8 1-14.8 1-14.8-14.3 3-31.2 4z"/></svg></a></div>
 
   <div class="slide">
     <figure class="pic" data-enter>
@@ -302,14 +534,14 @@
     </figure>
 
     <h1 class="name" data-enter><span>Demetre</span> <span>Mildiani</span></h1>
-    <p class="line" data-enter>Operations since 2022.</p>
+    <p class="line" data-enter>Startup operations since 2022.</p>
 
     <div class="reach">
       <ul class="icons" aria-label="Profiles and email" data-enter>
-        <li><a class="ico" rel="me" href="https://www.linkedin.com/in/demetre-mildiani/" lang="en" aria-label="LinkedIn"><svg viewBox="-1.5 -1.5 27 27" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></li>
-        <li><a class="ico" rel="me" href="https://www.facebook.com/demetre.mildiani/" lang="en" aria-label="Facebook"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg></a></li>
-        <li><a class="ico" rel="me" href="https://x.com/MildianiDemetre" lang="en" aria-label="X"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg></a></li>
-        <li><a class="ico" rel="me" href="https://www.producthunt.com/@demetre_mildiani1" lang="en" aria-label="Product Hunt"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M13.604 8.4h-3.405V12h3.405c.995 0 1.801-.806 1.801-1.801 0-.993-.805-1.799-1.801-1.799zM12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm1.604 14.4h-3.405V18H7.801V6h5.804c2.319 0 4.2 1.88 4.2 4.199 0 2.321-1.881 4.201-4.201 4.201z"/></svg></a></li>
+        <li class="tip-host"><a class="ico" rel="me" href="https://www.linkedin.com/in/demetre-mildiani/" lang="en" aria-label="LinkedIn" aria-describedby="tip-linkedin"><svg viewBox="-1.5 -1.5 27 27" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a><span class="tip" role="tooltip" id="tip-linkedin" lang="en">in/demetre-mildiani</span></li>
+        <li class="tip-host"><a class="ico" rel="me" href="https://www.facebook.com/demetre.mildiani/" lang="en" aria-label="Facebook" aria-describedby="tip-facebook"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg></a><span class="tip" role="tooltip" id="tip-facebook" lang="en">demetre.mildiani</span></li>
+        <li class="tip-host"><a class="ico" rel="me" href="https://x.com/MildianiDemetre" lang="en" aria-label="X" aria-describedby="tip-x"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg></a><span class="tip" role="tooltip" id="tip-x" lang="en">@MildianiDemetre</span></li>
+        <li class="tip-host"><a class="ico" rel="me" href="https://www.producthunt.com/@demetre_mildiani1" lang="en" aria-label="Product Hunt" aria-describedby="tip-producthunt"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M13.604 8.4h-3.405V12h3.405c.995 0 1.801-.806 1.801-1.801 0-.993-.805-1.799-1.801-1.799zM12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm1.604 14.4h-3.405V18H7.801V6h5.804c2.319 0 4.2 1.88 4.2 4.199 0 2.321-1.881 4.201-4.201 4.201z"/></svg></a><span class="tip" role="tooltip" id="tip-producthunt" lang="en">@demetre_mildiani1</span></li>
         <li><a class="ico" id="mail-ico" href="mailto:contact@demetremildiani.com" aria-label="Email Demetre"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M4 4h16a2.5 2.5 0 0 1 2.5 2.5v11a2.5 2.5 0 0 1-2.5 2.5H4a2.5 2.5 0 0 1-2.5-2.5v-11A2.5 2.5 0 0 1 4 4ZM4.1 6.9 12 12.2l7.9-5.3 1 1.5-8.9 6-8.9-6Z"/></svg></a></li>
       </ul>
       <div class="pop" id="mail-pop" hidden>
@@ -335,8 +567,16 @@
     function calm() { return !!M && !RM.matches; }
     function syncRM() { if (M && M.MotionGlobalConfig) M.MotionGlobalConfig.skipAnimations = RM.matches; }
     syncRM(); if (RM.addEventListener) RM.addEventListener('change', syncRM);
-    var EASE_OUT = [0.22, 1, 0.36, 1], EASE_IN = [0.4, 0, 1, 1];
-    var SETTLE = { type: 'spring', duration: 0.45, bounce: 0.15 }, FIRM = { type: 'spring', duration: 0.18, bounce: 0 };
+    /* The motion tokens live in the stylesheet (one set of numbers for CSS and JS): seconds and plain numbers come
+       back from parseFloat, an easing as its four cubic-bezier numbers, a distance in px. */
+    var CS = getComputedStyle(root);
+    function token(n) { return CS.getPropertyValue(n).trim(); }
+    function num(n) { return parseFloat(token(n)); }
+    function curve(n) { return token(n).match(/-?[\d.]+/g).map(Number); }
+    function rise(n, sign) { return 'translateY(' + (sign || 1) * num(n) + 'px)'; }
+    var EASE_OUT = curve('--ease-out'), EASE_IN = curve('--ease-in');
+    var SETTLE = { type: 'spring', duration: num('--dur-settle'), bounce: num('--bounce-settle') },
+        FIRM = { type: 'spring', duration: num('--dur-press'), bounce: 0 };
     function jump(els, kf) {
       [].concat(els.length != null && !els.style ? [].slice.call(els) : [els]).forEach(function (el) {
         for (var k in kf) { var v = kf[k]; el.style[k] = Array.isArray(v) ? v[v.length - 1] : v; }
@@ -355,7 +595,7 @@
     function syncPic() {
       var light = root.getAttribute('data-theme') === 'light';
       srcL.setAttribute('media', light ? 'all' : 'not all');
-      bar.setAttribute('content', light ? '#E8E9EB' : '#131416');
+      bar.setAttribute('content', token('--bg'));
     }
     syncPic(); window.addEventListener('hashchange', syncPic);
 
@@ -365,10 +605,11 @@
     function enter() {
       var gated = root.classList.contains('m-pre');
       if (calm() && gated) {
-        M.animate('.pic', { opacity: [0, 1], transform: ['scale(1.012)', 'scale(1)'] }, { duration: 0.7, ease: EASE_OUT, delay: 0.04 });
+        M.animate('.pic', { opacity: [0, 1], transform: ['scale(' + num('--scale-pic-from') + ')', 'scale(1)'] },
+          { duration: num('--dur-enter-pic'), ease: EASE_OUT, delay: num('--delay-pic') });
         M.animate(all('.name, .line, .icons li, .top, .also'),
-          { opacity: [0, 1], transform: ['translateY(6px)', 'translateY(0px)'] },
-          { duration: 0.56, ease: EASE_OUT, delay: M.stagger(0.045, { startDelay: 0.12 }) });
+          { opacity: [0, 1], transform: [rise('--rise-enter'), 'translateY(0px)'] },
+          { duration: num('--dur-enter'), ease: EASE_OUT, delay: M.stagger(num('--stagger'), { startDelay: num('--delay-enter') }) });
       }
       root.classList.remove('m-pre');
     }
@@ -385,25 +626,25 @@
       M.press('.ico, .copy, .lang', function (el) {
         if (!calm()) return;
         if (!el.style.transform) el.style.transform = 'scale(1)';
-        M.animate(el, { transform: ['scale(1)', el.classList.contains('lang') ? 'scale(0.985)' : 'scale(0.9)'] }, FIRM);
+        M.animate(el, { transform: ['scale(1)', 'scale(' + num(el.classList.contains('lang') ? '--scale-press-flag' : '--scale-press') + ')'] }, FIRM);
         return function () { M.animate(el, { transform: 'scale(1)' }, SETTLE); };
       });
     }
 
     /* Copy: the clipboard API where it exists, the old execCommand route where it doesn't, and if both fail the
-       address is left selected so it can be copied by hand. The copy mark turns into a tick for 1.6 s, and the live
-       region says so. */
+       address is left selected so it can be copied by hand. The copy mark turns into a tick for --hold-copied (1.6 s),
+       its state is data-state="copied" meanwhile, and the live region says so. */
     var ADDR = 'contact@demetremildiani.com', btn = $('#copy'), A = btn.querySelector('.cp-a'), B = btn.querySelector('.cp-b'),
         status = $('#copied'), hold, busy = false;
     function swap(out, inn) {
-      to(out, { opacity: 0, transform: 'translateY(-4px)' }, { duration: 0.18, ease: EASE_IN });
-      to(inn, { opacity: [0, 1], transform: ['translateY(4px)', 'translateY(0px)'] }, { duration: 0.26, ease: EASE_OUT, delay: 0.06 });
+      to(out, { opacity: 0, transform: rise('--rise-swap', -1) }, { duration: num('--dur-out'), ease: EASE_IN });
+      to(inn, { opacity: [0, 1], transform: [rise('--rise-swap'), 'translateY(0px)'] }, { duration: num('--dur-in'), ease: EASE_OUT, delay: num('--delay-in') });
     }
     function done() {
-      if (!btn.classList.contains('on')) swap(A, B);
-      btn.classList.add('on'); status.textContent = COPIED;
+      if (btn.getAttribute('data-state') !== 'copied') swap(A, B);
+      btn.setAttribute('data-state', 'copied'); status.textContent = COPIED;
       clearTimeout(hold);
-      hold = setTimeout(function () { swap(B, A); btn.classList.remove('on'); status.textContent = ''; }, 1600);
+      hold = setTimeout(function () { swap(B, A); btn.removeAttribute('data-state'); status.textContent = ''; }, num('--hold-copied') * 1000);
     }
     function fallback() {
       /* The hidden textarea takes focus for a moment; "busy" keeps that from closing the card, and focus goes back. */
@@ -430,11 +671,12 @@
     function isOpen() { return ico.getAttribute('aria-expanded') === 'true'; }
     function notch() {
       var i = ico.getBoundingClientRect(), p = pop.getBoundingClientRect();
-      pop.style.setProperty('--cx', Math.max(18, Math.min(p.width - 18, i.left + i.width / 2 - p.left)) + 'px');
+      var k = num('--notch-inset');
+      pop.style.setProperty('--cx', Math.max(k, Math.min(p.width - k, i.left + i.width / 2 - p.left)) + 'px');
     }
     function show() {
       tok++; pop.hidden = false; ico.setAttribute('aria-expanded', 'true'); notch();
-      to(pop, { opacity: [0, 1], transform: ['translateY(-4px)', 'translateY(0px)'] }, { duration: 0.22, ease: EASE_OUT });
+      to(pop, { opacity: [0, 1], transform: [rise('--rise-open', -1), 'translateY(0px)'] }, { duration: num('--dur-open'), ease: EASE_OUT });
       try { btn.focus({ preventScroll: true }); } catch (e) { btn.focus(); }
     }
     function hide() {
@@ -442,12 +684,40 @@
       var t = ++tok;
       ico.setAttribute('aria-expanded', 'false');
       if (pop.contains(document.activeElement)) try { ico.focus({ preventScroll: true }); } catch (e) { ico.focus(); }
-      to(pop, { opacity: 0, transform: 'translateY(-2px)' }, { duration: 0.14, ease: EASE_IN })
+      to(pop, { opacity: 0, transform: rise('--rise-close', -1) }, { duration: num('--dur-close'), ease: EASE_IN })
         .then(function () { if (t === tok) pop.hidden = true; });
     }
     ico.addEventListener('click', function (e) { e.preventDefault(); if (isOpen()) hide(); else show(); });
     ico.addEventListener('keydown', function (e) { if (e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); ico.click(); } });
-    document.addEventListener('keydown', function (e) { if ((e.key === 'Escape' || e.key === 'Esc') && isOpen()) hide(); });
+    /* Escape closes the card if it is open, and otherwise hides any tooltip showing (WCAG 1.4.13: dismissible
+       without moving the pointer or focus). A dismissed tip stays hidden until the pointer leaves its mark or focus
+       moves on. */
+    var hosts = all('.tip-host');
+    function hush(h) { h.setAttribute('data-state', 'dismissed'); }
+    function wake() { this.removeAttribute('data-state'); }
+    /* Keep a tip on screen: centred under its mark unless that takes it closer than --gutter to the window's edge;
+       then it slides in by --tip-dx and --cx keeps the notch over the mark (no nearer the tip's ends than
+       --notch-inset). Measured just before it can show (pointer in, focus in) and on resize. */
+    function place(h) {
+      var t = h.querySelector('.tip'); if (!t) return;
+      var r = h.getBoundingClientRect(), w = t.offsetWidth, vw = root.clientWidth, g = num('--gutter'), k = num('--notch-inset');
+      var c = r.left + r.width / 2, x = c - w / 2, lo = g, hi = vw - g - w;
+      var dx = (hi < lo ? lo : Math.max(lo, Math.min(hi, x))) - x;
+      t.style.setProperty('--tip-dx', dx + 'px');
+      t.style.setProperty('--cx', Math.max(k, Math.min(w - k, w / 2 - dx)) + 'px');
+    }
+    function placeAll() { hosts.forEach(place); }
+    hosts.forEach(function (h) {
+      h.addEventListener('mouseleave', wake); h.addEventListener('focusout', wake);
+      h.addEventListener('pointerenter', function () { place(h); }); h.addEventListener('focusin', function () { place(h); });
+    });
+    placeAll(); window.addEventListener('resize', placeAll);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeAll);
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' && e.key !== 'Esc') return;
+      if (isOpen()) { hide(); return; }
+      hosts.forEach(function (h) { if (h.matches(':hover') || h.contains(document.activeElement)) hush(h); });
+    });
     window.addEventListener('resize', function () { if (isOpen()) notch(); });
     document.addEventListener('click', function (e) { if (isOpen() && !pop.contains(e.target) && !ico.contains(e.target)) hide(); });
     pop.addEventListener('focusout', function (e) {
