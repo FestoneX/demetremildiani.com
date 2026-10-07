@@ -50,9 +50,15 @@
     setTimeout(function () { d.classList.remove('m-pre'); }, 1200);
   })();
 </script>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300..500&family=Noto+Sans+Georgian:wght@300..500&display=swap">
+<!-- Switzer (Fontshare, ITF Free Font License v2.0: free for commercial use, self-hosting allowed, redistribution
+     banned, so it is loaded from Fontshare's CSS API and never committed to this public repo). Chosen by Demetre on 7 Oct
+     2026 from research/fonts-board.html. Noto Sans Georgian (OFL) carries the Georgian. -->
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@300,400,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300..500&display=swap">
 <style>
   /* Design read: a keynote slide at night. One lit portrait on a dark stage, the name set large and light under it,
      one grey line, and under that one quiet row of monochrome marks for the profiles and email. Everything sits on
@@ -60,7 +66,7 @@
      The light is the photograph's own: each print's backdrop is repainted so its edges meet the page at the page's
      own tone (n4-keynote/photo/prints.py), so the print has no visible frame and the soft pool of light around his
      head, which is the seamless's photographed falloff, is the only glow on the page.
-     Type: Hanken Grotesk, light (300) at size; Noto Sans Georgian carries the Georgian.
+     Type: Switzer, light (300) at size; Noto Sans Georgian carries the Georgian.
      Theme: dark always, whatever the system asks (7 Oct). The day palette is kept for later; only "#light" in the
      address turns it on, and nothing on the page links there. */
   :root {
@@ -87,7 +93,7 @@
   html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--bg); }
   body {
     margin: 0; background: var(--bg); color: var(--fg);
-    font: 400 1rem/1.45 "Hanken Grotesk", "Noto Sans Georgian", system-ui, sans-serif;
+    font: 400 1rem/1.45 "Switzer", "Noto Sans Georgian", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-wrap: break-word;
     font-feature-settings: "kern" 1;
   }
@@ -128,10 +134,10 @@
   /* The one large thing: the name, light, tight. Only the name is full white. */
   .name {
     margin: 18px 0 0; text-align: center;
-    font-weight: 300; font-size: clamp(2.125rem, 10.8vw, 2.75rem); line-height: 1.04; letter-spacing: -.034em;
+    font-weight: 300; font-size: clamp(2.125rem, 10.8vw, 2.75rem); line-height: 1.04; letter-spacing: -.03em;
   }
   :root[lang="ka"] .name { font-family: "Noto Sans Georgian", sans-serif; font-size: clamp(1.625rem, 8vw, 2.125rem); line-height: 1.28; letter-spacing: 0; }
-  .line { margin: 8px auto 0; max-width: 24em; text-align: center; color: var(--fg-2); font-size: 1.0625rem; letter-spacing: -.004em; text-wrap: balance; }
+  .line { margin: 8px auto 0; max-width: 24em; text-align: center; color: var(--fg-2); font-size: 1.0625rem; letter-spacing: -.006em; text-wrap: balance; }
   :root[lang="ka"] .line { margin-top: 6px; font-size: .9375rem; line-height: 1.55; letter-spacing: 0; }
 
   /* The profiles and email: one row of monochrome marks (7 Oct, his ask: "icons instead of LinkedIn ... black and
@@ -231,7 +237,7 @@
     .slide { max-width: 60rem; margin: auto; padding: clamp(40px, 7vh, 72px) 0 clamp(28px, 5vh, 56px); }
     .top { right: 36px; top: 20px; }
     .pic { width: clamp(156px, 23vh, 240px); margin-top: 0; }
-    .name { font-size: clamp(4rem, min(5.8vw, 9.6vh), 5.75rem); margin-top: clamp(22px, 3.6vh, 36px); letter-spacing: -.038em; line-height: 1; }
+    .name { font-size: clamp(4rem, min(5.8vw, 9.6vh), 5.75rem); margin-top: clamp(22px, 3.6vh, 36px); letter-spacing: -.036em; line-height: 1; }
     :root[lang="ka"] .name { font-size: clamp(2.875rem, min(4.2vw, 7vh), 4.125rem); line-height: 1.2; }
     .line { font-size: 1.375rem; margin-top: 14px; }
     :root[lang="ka"] .line { font-size: 1.1875rem; margin-top: 10px; }
