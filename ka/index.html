@@ -9,9 +9,8 @@
 <link rel="alternate" hreflang="en" href="https://demetremildiani.com/">
 <link rel="alternate" hreflang="ka" href="https://demetremildiani.com/ka/">
 <link rel="alternate" hreflang="x-default" href="https://demetremildiani.com/">
-<meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#131416" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#E8E9EB" media="(prefers-color-scheme: light)">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#131416">
 <meta property="og:type" content="profile">
 <meta property="og:image" content="https://demetremildiani.com/assets/img/demetre-mildiani-share.jpg">
 <meta property="og:image:type" content="image/jpeg">
@@ -29,7 +28,8 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23131416'/%3E%3Crect x='11' y='7' width='10' height='12.5' fill='%23F2F2F4'/%3E%3Crect x='7' y='23.5' width='18' height='1.5' fill='%239A9CA2'/%3E%3C/svg%3E">
 <script>
   /* Before first paint.
-     Theme: dark unless the system asks for light; "#dark" and "#light" in the address override both ways.
+     Theme: always dark, whatever the system asks (7 Oct, his call: "keep the dark theme the default and hide the mode
+     switch"). The day theme is kept for later, reachable only by "#light" in the address; there is no visible switch.
      Language: each page is one language (/ English, /ka/ Georgian). Old links with "?lang=ka" go to /ka/ and
      "?lang=en" to /; any other query and the hash ride along. The old "last choice" key is cleared.
      Motion gate (MOTION.md, pattern 0): only when JS runs and motion is allowed are the entrance blocks hidden, and a
@@ -37,7 +37,7 @@
      page script checks the gate is still up before it animates anything. */
   (function () {
     var d = document.documentElement; d.classList.add('js');
-    function theme() { var h = location.hash; if (h === '#dark' || h === '#light') d.setAttribute('data-theme', h.slice(1)); else d.removeAttribute('data-theme'); }
+    function theme() { if (location.hash === '#light') d.setAttribute('data-theme', 'light'); else d.removeAttribute('data-theme'); }
     theme(); window.addEventListener('hashchange', theme);
     var m = /[?&]lang=(ka|en)\b/.exec(location.search);
     if (m) {
@@ -55,12 +55,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300..500&family=Noto+Sans+Georgian:wght@300..500&display=swap">
 <style>
   /* Design read: a keynote slide at night. One lit portrait on a dark stage, the name set large and light under it,
-     one grey line, and the profiles as quiet large rows. Everything sits on one centre axis; the rest is black.
+     one grey line, and under that one quiet row of monochrome marks for the profiles and email. Everything sits on
+     one centre axis; the rest is black.
      The light is the photograph's own: each print's backdrop is repainted so its edges meet the page at the page's
      own tone (n4-keynote/photo/prints.py), so the print has no visible frame and the soft pool of light around his
      head, which is the seamless's photographed falloff, is the only glow on the page.
-     Type: Hanken Grotesk, light (300) at size and a touch above light (340) in the rows; Noto Sans Georgian carries
-     the Georgian. */
+     Type: Hanken Grotesk, light (300) at size; Noto Sans Georgian carries the Georgian.
+     Theme: dark always, whatever the system asks (7 Oct). The day palette is kept for later; only "#light" in the
+     address turns it on, and nothing on the page links there. */
   :root {
     --bg: #131416;          /* = the dark print's edge tone: the print melts into the stage on three sides */
     --fg: #F2F2F4;          /* 16.5:1 */
@@ -68,28 +70,15 @@
     --fg-3: #818389;        /* 4.9:1 */
     --rule: #26272B;
     --rule-hi: #3E3F44;
-    --fg-row: #BFC1C6;      /* the rows' labels, a step below white: 10.2:1 */
-    /* The Copy key rests dark (a keycap a step above the stage, one hairline, white ink: 14.7:1) and comes up to
-       white only under the pointer, on press and while "Copied" shows, so at rest the face stays the one lit thing. */
-    --key: #1E1F22; --key-ink: #F2F2F4; --key-ring: #3E3F44; --key-hi: rgba(255, 255, 255, .07); --key-lo: rgba(0, 0, 0, .35);
-    --key-lit: #F2F2F4; --key-lit-ink: #131416; --key-lit-hi: rgba(255, 255, 255, .9); --key-lit-lo: rgba(0, 0, 0, .22);
+    --fg-row: #BFC1C6;      /* a step below white: 10.2:1 */
     --ease: cubic-bezier(.22, 1, .36, 1);
     color-scheme: dark;
   }
-  /* Day: the same stage with the house lights up. A cool studio grey, the light print of the same sitting, whose
-     edges are the page tone and whose pool around the head is a few levels lighter; ink-black type. */
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) {
-      --bg: #E8E9EB; --fg: #111214; --fg-2: #4E5157; --fg-3: #5F6268; --rule: #CDCED2; --rule-hi: #A9ABB0;
-      --fg-row: #3A3D42; --key: #F5F6F7; --key-ink: #111214; --key-ring: #B4B6BB; --key-hi: rgba(255, 255, 255, .8); --key-lo: rgba(0, 0, 0, .07);
-      --key-lit: #16171A; --key-lit-ink: #F2F2F4; --key-lit-hi: rgba(255, 255, 255, .16); --key-lit-lo: rgba(0, 0, 0, .4);
-      color-scheme: light;
-    }
-  }
+  /* Day, kept for later: the same stage with the house lights up. A cool studio grey, the light print of the same
+     sitting, whose edges are the page tone and whose pool around the head is a few levels lighter; ink-black type. */
   :root[data-theme="light"] {
     --bg: #E8E9EB; --fg: #111214; --fg-2: #4E5157; --fg-3: #5F6268; --rule: #CDCED2; --rule-hi: #A9ABB0;
-    --fg-row: #3A3D42; --key: #F5F6F7; --key-ink: #111214; --key-ring: #B4B6BB; --key-hi: rgba(255, 255, 255, .8); --key-lo: rgba(0, 0, 0, .07);
-    --key-lit: #16171A; --key-lit-ink: #F2F2F4; --key-lit-hi: rgba(255, 255, 255, .16); --key-lit-lo: rgba(0, 0, 0, .4);
+    --fg-row: #3A3D42;
     color-scheme: light;
   }
 
@@ -115,7 +104,8 @@
     display: flex; flex-direction: column;
     padding: 0 16px calc(32px + env(safe-area-inset-bottom));
   }
-  .slide { width: 100%; max-width: 34rem; margin: 0 auto; }
+  /* The slide sits in the middle of the first screen, "Also" on the floor under it. */
+  .slide { width: 100%; max-width: 34rem; margin: auto; padding: 56px 0 8px; }
 
   /* The language key: a small flag in the top corner, outside the composition, linking to the other language's
      page (6 Oct: a flag, not a word; 7 Oct: a real link to /ka/ and back). */
@@ -131,10 +121,10 @@
   /* The portrait: a hard-edged 4:5 print on the centre axis. No frame, no shadow: the backdrop's edges are the
      page's own tone, so only the sweater's cut at the bottom draws an edge, and the pool of light around his head is
      in the photograph. */
-  .pic { margin: 24px auto 0; width: clamp(124px, 37vw, 144px); aspect-ratio: 4 / 5; background: var(--bg); }
+  .pic { margin: 0 auto; width: clamp(124px, 37vw, 144px); aspect-ratio: 4 / 5; background: var(--bg); }
   .pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
-  /* The one large thing: the name, light, tight. Only the name and the address are full white. */
+  /* The one large thing: the name, light, tight. Only the name is full white. */
   .name {
     margin: 18px 0 0; text-align: center;
     font-weight: 300; font-size: clamp(2.125rem, 10.8vw, 2.75rem); line-height: 1.04; letter-spacing: -.034em;
@@ -143,68 +133,42 @@
   .line { margin: 8px auto 0; max-width: 24em; text-align: center; color: var(--fg-2); font-size: 1.0625rem; letter-spacing: -.004em; text-wrap: balance; }
   :root[lang="ka"] .line { margin-top: 6px; font-size: .9375rem; line-height: 1.55; letter-spacing: 0; }
 
-  /* The rows: large and quiet. The labels sit a step below white and come up to white under the pointer, the way
-     the print came up on arrival; the note sits on the right, a hairline between. */
-  .links { list-style: none; margin: 24px 0 0; padding: 0; border-bottom: 1px solid var(--rule); }
-  .links li { border-top: 1px solid var(--rule); transition: border-color .22s var(--ease); }
-  .row {
-    /* The note always keeps at least 40% of the row, so under large text the label wraps instead of running under
-       the note. */
-    display: grid; grid-template-columns: minmax(0, auto) minmax(40%, 1fr) 12px; grid-template-areas: "lab hint arw";
-    align-items: center; column-gap: 14px; min-height: 52px; padding: 6px 0; transform-origin: 50% 50%;
+  /* The profiles and email: one row of monochrome marks (7 Oct, his ask: "icons instead of LinkedIn ... black and
+     white type icons"), in the order he named them: LinkedIn, Facebook, X, Product Hunt, then email. The four brand
+     marks are Simple Icons (CC0), the envelope is drawn for the page, filled like them. They rest in
+     the muted grey and come up to full ink under the pointer and on focus; never a brand colour, no circles, no
+     pills. Each target is 48 px square on a phone (the glyph 22 px), so a thumb has room between them. */
+  .icons { list-style: none; margin: 28px 0 0; padding: 0; display: flex; justify-content: center; gap: 6px; }
+  .ico {
+    display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px;
+    color: var(--fg-2); transition: color .22s var(--ease); -webkit-tap-highlight-color: transparent;
   }
-  .row.solo { grid-template-areas: "lab lab arw"; }   /* no note: the label has the whole line */
-  .lab { grid-area: lab; font-size: 1.4375rem; font-weight: 340; line-height: 1.2; letter-spacing: -.02em; color: var(--fg-row); transition: color .22s var(--ease); }
-  .hint { grid-area: hint; justify-self: end; text-align: right; font-size: .8125rem; line-height: 1.35; color: var(--fg-2); text-wrap: balance; }
-  :root[lang="ka"] .hint { font-size: .78125rem; line-height: 1.4; }
-  .arw { grid-area: arw; width: 12px; height: 12px; color: var(--fg-3); transition: color .22s var(--ease); }
-  @media (hover: hover) {
-    .row:hover .lab, .row:hover .arw { color: var(--fg); }
-  }
-  .row:focus-visible .lab { color: var(--fg); }
-  .row:focus-visible { outline-offset: 2px; }
+  .ico svg { display: block; width: 22px; height: 22px; }
+  @media (hover: hover) { .ico:hover { color: var(--fg); } }
+  .ico:focus-visible { color: var(--fg); outline-offset: 0; border-radius: 12px; }
 
-  /* The address: the one action. Full white and underlined; beside it the Copy key, dark until it is used. */
-  .mail-row {
-    display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "mlab copy" "mail mail";
-    align-items: baseline; column-gap: 12px; margin-top: 14px;
-  }
-  .mlab { grid-area: mlab; font-size: .8125rem; color: var(--fg-3); }
-  .mail { grid-area: mail; justify-self: start; display: inline-flex; align-items: center; min-height: 44px; min-width: 0; font-size: 1.1875rem; letter-spacing: -.01em; overflow-wrap: anywhere; text-decoration: underline; text-decoration-color: var(--rule-hi); text-decoration-thickness: 1px; text-underline-offset: .3em; transition: text-decoration-color .22s var(--ease); }
-  @media (hover: hover) { .mail:hover { text-decoration-color: currentColor; } }
+  /* The address, small and quiet under the marks. It is plain text, so a long press on a phone selects it (all of it
+     in one go), and the "Copy" beside it is a word, not a key: it says "Copied" for a moment after a tap.
+     The address itself sits on the centre axis, like everything above it; "Copy" hangs off its right edge. Three
+     columns, the outer two equal (1fr each, the left one empty), the right one never narrower than the word, so
+     nothing can run off the page. Where the two 1fr halves can't hold the word, which is a phone under 360 px, or
+     under 460 px for the longer Georgian word, "Copy" goes on its own line under the address, still on the axis.
+     Without JS there is no Copy and the address is centred. */
+  .addr { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(max-content, 1fr); align-items: center; margin: 4px 0 0; font-size: .875rem; color: var(--fg-2); }
+  .addr .mail { grid-column: 2; -webkit-user-select: all; user-select: all; overflow-wrap: anywhere; padding: 12px 0; }
+  .addr .copy { grid-column: 3; justify-self: start; }
+  @media (max-width: 359px) { .addr { grid-template-columns: 1fr; justify-items: center; } .addr .mail, .addr .copy { grid-column: 1; } .addr .copy { justify-self: center; margin-top: -10px; } }
+  @media (max-width: 459px) { :root[lang="ka"] .addr { grid-template-columns: 1fr; justify-items: center; } :root[lang="ka"] .addr .mail, :root[lang="ka"] .addr .copy { grid-column: 1; } :root[lang="ka"] .addr .copy { justify-self: center; margin-top: -10px; } }
   .copy { display: none; }
-  /* The key: 44 px to the finger, 36 px to the eye. Transparent borders top and bottom take the difference, and the
-     fill is clipped inside them, so the visible key is inset from its target (the radii are 6 px once clipped). At
-     rest it is a dark keycap: a hairline ring, a faint lit top edge and a shaded bottom edge, white ink. Under the
-     pointer, on press and while "Copied" shows (.on) it comes up to white, the way the print came up on arrival. */
-  .js .copy {
-    grid-area: copy; display: inline-grid; min-height: 44px; min-width: 64px; padding: 0 14px;
-    border: solid transparent; border-width: 4px 0; border-radius: 6px / 10px;
-    background: var(--key); background-clip: padding-box; color: var(--key-ink);
-    box-shadow: inset 0 1px 0 var(--key-hi), inset 0 -1px 0 var(--key-lo), inset 0 0 0 1px var(--key-ring);
-    font-size: .875rem; font-weight: 500; letter-spacing: .002em;
-    transition: background-color .22s var(--ease), color .22s var(--ease), box-shadow .22s var(--ease);
-  }
-  .copy > span { grid-area: 1 / 1; place-self: center; white-space: nowrap; }
+  .js .copy { display: inline-grid; min-height: 44px; min-width: 44px; padding: 0 12px; color: var(--fg-3); transition: color .22s var(--ease); }
+  .copy > span { grid-area: 1 / 1; place-self: center; white-space: nowrap; text-decoration: underline; text-decoration-color: var(--rule-hi); text-decoration-thickness: 1px; text-underline-offset: .3em; transition: text-decoration-color .22s var(--ease); }
   .cp-b { opacity: 0; }
-  .js .copy:active, .js .copy.on {
-    background-color: var(--key-lit); color: var(--key-lit-ink);
-    box-shadow: inset 0 1px 0 var(--key-lit-hi), inset 0 -1px 0 var(--key-lit-lo), inset 0 0 0 1px var(--key-lit);
-  }
-  @media (hover: hover) {
-    .js .copy:hover {
-      background-color: var(--key-lit); color: var(--key-lit-ink);
-      box-shadow: inset 0 1px 0 var(--key-lit-hi), inset 0 -1px 0 var(--key-lit-lo), inset 0 0 0 1px var(--key-lit);
-    }
-  }
-
-  /* Where the address and its key fit on one line, they share it, under the small label; where they don't (Georgian
-     under 420 px, English under 380 px), the key moves up beside the label. */
-  @media (min-width: 380px) and (max-width: 599px) { :root:not([lang="ka"]) .mail-row { grid-template-areas: "mlab mlab" "mail copy"; } }
-  @media (min-width: 420px) and (max-width: 599px) { :root[lang="ka"] .mail-row { grid-template-areas: "mlab mlab" "mail copy"; } }
+  .js .copy.on { color: var(--fg); }
+  @media (hover: hover) { .js .copy:hover { color: var(--fg); } .copy:hover > span { text-decoration-color: currentColor; } }
+  .copy:focus-visible { outline-offset: -4px; }
 
   /* Also: after the slide, small and grey. */
-  .also { width: 100%; max-width: 34rem; margin: 112px auto 0; font-size: .875rem; }
+  .also { width: 100%; max-width: 34rem; margin: 40px auto 0; font-size: .875rem; }
   .also h2 { margin: 0 0 4px; font: inherit; color: var(--fg-3); }
   .also ul { list-style: none; margin: 0; padding: 0; }
   .also a { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 12px; align-items: baseline; min-height: 44px; padding: 11px 0; border-top: 1px solid var(--rule); }
@@ -215,23 +179,20 @@
   @media (min-width: 600px) {
     .stage { padding: 0 32px 40px; }
     .top { right: 20px; top: 12px; }
-    .pic { width: 168px; margin-top: 76px; }
+    .slide { padding: 88px 0 24px; }
+    .pic { width: 168px; }
     .name { font-size: 3.5rem; margin-top: 28px; }
     :root[lang="ka"] .name { font-size: 2.625rem; }
     .line { font-size: 1.1875rem; margin-top: 10px; }
     :root[lang="ka"] .line { font-size: 1.0625rem; }
-    .links { margin-top: 48px; }
-    .row { min-height: 62px; }
-    .lab { font-size: 1.625rem; }
-    .hint { font-size: .9375rem; }
-    :root[lang="ka"] .hint { font-size: .875rem; }
-    .mail-row { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "mlab mail copy"; column-gap: 20px; margin-top: 20px; }
-    .mail { font-size: 1.25rem; }
+    .icons { margin-top: 36px; gap: 10px; }
+    .ico { width: 52px; height: 52px; }
+    .ico svg { width: 24px; height: 24px; }
+    .addr { font-size: .9375rem; margin-top: 6px; }
   }
 
-  /* Desktop: the first screen is the slide, centred on both axes. The four profiles become one row of four, each
-     hung from its own hairline; the address closes the slide on the centre axis; "Also" is a quiet line on the
-     stage floor. */
+  /* Desktop: the first screen is the slide, centred on both axes; the marks and the address close it on the centre
+     axis; "Also" is a quiet line on the stage floor. */
   @media (min-width: 1000px) {
     .stage { padding: 0 48px 18px; }   /* 30 px to the floor line's text, as the 44 px links keep 12 px under it */
     /* Sizes and gaps follow the screen's height as well as its width, so the whole slide, address included, stays on
@@ -243,20 +204,10 @@
     :root[lang="ka"] .name { font-size: clamp(2.875rem, min(4.2vw, 7vh), 4.125rem); line-height: 1.2; }
     .line { font-size: 1.375rem; margin-top: 14px; }
     :root[lang="ka"] .line { font-size: 1.1875rem; margin-top: 10px; }
-    .links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 32px; margin-top: clamp(40px, 8vh, 80px); border: 0; }
-    .row {
-      grid-template-columns: minmax(0, 1fr) 12px; grid-template-areas: "lab arw" "hint hint";
-      align-items: baseline; row-gap: 6px; min-height: 0; padding: 18px 0 0;
-    }
-    .row.solo { grid-template-areas: "lab arw"; }
-    .lab { font-size: 1.75rem; }
-    .arw { align-self: center; }
-    .hint { justify-self: start; text-align: left; font-size: .9375rem; }
-    :root[lang="ka"] .hint { font-size: .875rem; }
-    @media (hover: hover) { .links li:hover { border-top-color: var(--rule-hi); } }
-    .mail-row { grid-template-columns: auto auto auto; justify-content: center; column-gap: 22px; margin-top: clamp(36px, 7vh, 72px); }
-    .mlab { font-size: .9375rem; }
-    .mail { font-size: 1.375rem; }
+    .icons { margin-top: clamp(32px, 6vh, 56px); gap: 16px; }
+    .ico { width: 56px; height: 56px; }
+    .ico svg { width: 26px; height: 26px; }
+    .addr { margin-top: 8px; }
     .also { max-width: none; margin: -12px 0 0; display: flex; justify-content: center; align-items: baseline; gap: 4px 28px; flex-wrap: wrap; }
     .also h2 { margin: 0; }
     .also ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 28px; }
@@ -308,7 +259,7 @@
   <div class="slide">
     <figure class="pic" data-enter>
       <picture>
-        <source id="pic-light" media="(prefers-color-scheme: light)" type="image/webp" srcset="/assets/img/demetre-mildiani-portrait-light-600.webp 600w, /assets/img/demetre-mildiani-portrait-light-1200.webp 1200w" sizes="(min-width: 1000px) 240px, (min-width: 600px) 168px, 144px">
+        <source id="pic-light" media="not all" type="image/webp" srcset="/assets/img/demetre-mildiani-portrait-light-600.webp 600w, /assets/img/demetre-mildiani-portrait-light-1200.webp 1200w" sizes="(min-width: 1000px) 240px, (min-width: 600px) 168px, 144px">
         <source type="image/webp" srcset="/assets/img/demetre-mildiani-portrait-dark-600.webp 600w, /assets/img/demetre-mildiani-portrait-dark-1200.webp 1200w" sizes="(min-width: 1000px) 240px, (min-width: 600px) 168px, 144px">
         <img src="/assets/img/demetre-mildiani-portrait-dark-600.jpg" srcset="/assets/img/demetre-mildiani-portrait-dark-600.jpg 600w, /assets/img/demetre-mildiani-portrait-dark-1200.jpg 1200w" sizes="(min-width: 1000px) 240px, (min-width: 600px) 168px, 144px" width="600" height="750" alt="დემეტრე მილდიანი, იღიმის, მუქ სვიტერში, მუქ ნაცრისფერ ფონზე" decoding="async">
       </picture>
@@ -317,19 +268,15 @@
     <h1 class="name" data-enter><span>დემეტრე</span> <span>მილდიანი</span></h1>
     <p class="line" data-enter>ოპერაციული მართვა 2022 წლიდან.</p>
 
-    <ul class="links" aria-label="პროფილები" data-enter>
-      <li><a class="row" rel="me" href="https://www.linkedin.com/in/demetre-mildiani/"><span class="lab" lang="en">LinkedIn</span><span class="hint">სამსახური და პოსტები</span><svg class="arw" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M4 2.5h5.5V8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></a></li>
-      <li><a class="row solo" rel="me" href="https://www.facebook.com/demetre.mildiani/"><span class="lab" lang="en">Facebook</span><svg class="arw" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M4 2.5h5.5V8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></a></li>
-      <li><a class="row" rel="me" href="https://x.com/MildianiDemetre"><span class="lab" lang="en">X</span><span class="hint">100 აპი, <span class="nw">თითო-თითოდ</span></span><svg class="arw" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M4 2.5h5.5V8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></a></li>
-      <li><a class="row" rel="me" href="https://www.producthunt.com/@demetre_mildiani1"><span class="lab" lang="en">Product Hunt</span><span class="hint">ყოველდღე, 2024 წლის 8&nbsp;თებერვლიდან</span><svg class="arw" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M4 2.5h5.5V8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></a></li>
+    <ul class="icons" aria-label="პროფილები და ელფოსტა" data-enter>
+      <li><a class="ico" rel="me" href="https://www.linkedin.com/in/demetre-mildiani/" lang="en" aria-label="LinkedIn"><svg viewBox="-1.5 -1.5 27 27" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></li>
+      <li><a class="ico" rel="me" href="https://www.facebook.com/demetre.mildiani/" lang="en" aria-label="Facebook"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg></a></li>
+      <li><a class="ico" rel="me" href="https://x.com/MildianiDemetre" lang="en" aria-label="X"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg></a></li>
+      <li><a class="ico" rel="me" href="https://www.producthunt.com/@demetre_mildiani1" lang="en" aria-label="Product Hunt"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M13.604 8.4h-3.405V12h3.405c.995 0 1.801-.806 1.801-1.801 0-.993-.805-1.799-1.801-1.799zM12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm1.604 14.4h-3.405V18H7.801V6h5.804c2.319 0 4.2 1.88 4.2 4.199 0 2.321-1.881 4.201-4.201 4.201z"/></svg></a></li>
+      <li><a class="ico" href="mailto:contact@demetremildiani.com" aria-label="ელფოსტა"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M4 4h16a2.5 2.5 0 0 1 2.5 2.5v11a2.5 2.5 0 0 1-2.5 2.5H4a2.5 2.5 0 0 1-2.5-2.5v-11A2.5 2.5 0 0 1 4 4ZM4.1 6.9 12 12.2l7.9-5.3 1 1.5-8.9 6-8.9-6Z"/></svg></a></li>
     </ul>
 
-    <div class="mail-row" data-enter>
-      <span class="mlab">ელფოსტა</span>
-      <a class="mail" href="mailto:contact@demetremildiani.com" id="mail">contact@<wbr>demetremildiani.com</a>
-      <button class="copy" type="button" id="copy" aria-label="ელფოსტის მისამართის კოპირება" aria-describedby="mail"><span class="cp-a">კოპირება</span><span class="cp-b" aria-hidden="true">დაკოპირდა</span></button>
-      <span class="sr" role="status" id="copied"></span>
-    </div>
+    <p class="addr" data-enter><span class="mail" id="mail">contact@<wbr>demetremildiani.com</span><button class="copy" type="button" id="copy" aria-label="ელფოსტის მისამართის კოპირება"><span class="cp-a">კოპირება</span><span class="cp-b" aria-hidden="true">დაკოპირდა</span></button><span class="sr" role="status" id="copied"></span></p>
   </div>
 
   <section class="also" aria-labelledby="also-h" data-enter>
@@ -337,8 +284,6 @@
     <ul>
       <li><a href="https://www.linkedin.com/posts/demetre-mildiani_100dayappchallenge-ai-nocode-activity-7424340373432332288-LO6H"><span class="t" lang="en">100 Day App Challenge</span><span class="w">პოსტი <span class="nw">LinkedIn-ზე</span></span></a></li>
       <li><a href="https://timecable.vercel.app/"><span class="t" lang="en">TimeCable</span><span class="w">მოქმედი აპი</span></a></li>
-      <li><a href="https://www.facebook.com/Medialab.ge/videos/2369027900217170/"><span class="t">სემინარი ComCom <span class="nw">MediaLab-ში</span></span><span class="w">ვიდეო</span></a></li>
-      <li><a href="https://www.youtube.com/watch?v=S8SMmadAWkg&amp;t=2835s"><span class="t">პოდკასტი AI Pulse Georgia</span><span class="w" lang="en">YouTube</span></a></li>
     </ul>
   </section>
 </main>
@@ -364,15 +309,13 @@
     var all = function (s) { return [].slice.call(document.querySelectorAll(s)); };
     var COPIED = 'ელფოსტის მისამართი დაკოპირდა';
 
-    /* The photo follows the theme: the system setting picks the print by itself (the <source> media query); a
-       "#dark" or "#light" override re-points that source. */
-    var srcL = $('#pic-light');
+    /* The photo follows the theme: the dark print always, the light one only under "#light" (its <source> is off by
+       default, "media: not all"); the browser bar's colour follows too. */
+    var srcL = $('#pic-light'), bar = $('meta[name="theme-color"]');
     function syncPic() {
-      var th = root.getAttribute('data-theme');
-      srcL.setAttribute('media', th === 'dark' ? 'not all' : th === 'light' ? 'all' : '(prefers-color-scheme: light)');
-      all('meta[name="theme-color"]').forEach(function (m, i) {
-        m.setAttribute('content', th === 'dark' ? '#131416' : th === 'light' ? '#E8E9EB' : (i === 0 ? '#131416' : '#E8E9EB'));
-      });
+      var light = root.getAttribute('data-theme') === 'light';
+      srcL.setAttribute('media', light ? 'all' : 'not all');
+      bar.setAttribute('content', light ? '#E8E9EB' : '#131416');
     }
     syncPic(); window.addEventListener('hashchange', syncPic);
 
@@ -383,7 +326,7 @@
       var gated = root.classList.contains('m-pre');
       if (calm() && gated) {
         M.animate('.pic', { opacity: [0, 1], transform: ['scale(1.012)', 'scale(1)'] }, { duration: 0.7, ease: EASE_OUT, delay: 0.04 });
-        M.animate(all('.name, .line, .links, .mail-row, .top, .also'),
+        M.animate(all('.name, .line, .icons li, .addr, .top, .also'),
           { opacity: [0, 1], transform: ['translateY(6px)', 'translateY(0px)'] },
           { duration: 0.56, ease: EASE_OUT, delay: M.stagger(0.045, { startDelay: 0.12 }) });
       }
@@ -392,22 +335,17 @@
     enter();
 
     if (M) {
-      M.hover('.row', function (el) {
-        var a = el.querySelector('.arw');
-        if (!calm() || !a) return;
-        M.animate(a, { transform: 'translate(2px, -2px)' }, { type: 'spring', duration: 0.35, bounce: 0 });
-        return function () { M.animate(a, { transform: 'translate(0px, 0px)' }, { type: 'spring', duration: 0.4, bounce: 0 }); };
-      });
-      /* Press: the row or key dips to 0.985 and springs back. Two guards keep Motion from ever reading the resting
+      /* Press: a mark dips to 0.9 (it is small, so it needs the deeper dip to be seen), the Copy word and the flag to
+         0.985, and each springs back. Two guards keep Motion from ever reading the resting
          "transform: none", which it interpolates as scale(0): an inline scale(1) is seeded before the first press,
          and the press keyframes start explicitly at scale(1). Without them a quick tap (released before the press
          animation had drawn a frame) made the release spring start from almost nothing: measured in headless Chrome,
          the key fell to scale 0.07 at 36 ms after a 0 ms tap and to 0.63 after a 40 ms hold, then grew back. With
-         them it stays between 0.985 and 1.0001, and a 0 ms tap does not move at all. */
-      M.press('.row, .copy, .lang', function (el) {
+         them it stays between the dip and 1.0001, and a 0 ms tap does not move at all. */
+      M.press('.ico, .copy, .lang', function (el) {
         if (!calm()) return;
         if (!el.style.transform) el.style.transform = 'scale(1)';
-        M.animate(el, { transform: ['scale(1)', 'scale(0.985)'] }, FIRM);
+        M.animate(el, { transform: ['scale(1)', el.classList.contains('ico') ? 'scale(0.9)' : 'scale(0.985)'] }, FIRM);
         return function () { M.animate(el, { transform: 'scale(1)' }, SETTLE); };
       });
     }
