@@ -762,7 +762,9 @@
     function wake() { this.removeAttribute('data-state'); }
     /* Keep a tip on screen: centred under its mark unless that takes it closer than --gutter to the window's edge;
        then it slides in by --tip-dx and --cx keeps the notch over the mark (no nearer the tip's ends than
-       --notch-inset). Measured just before it can show (pointer in, focus in) and on resize. */
+       --notch-inset). Measured just before it can show (pointer in, focus in), on resize, and whenever the tip itself
+       changes size: its width follows the text size, which a browser setting can change with no resize, and a hidden
+       tip still placed for the old size hangs past the edge and the page scrolls sideways (200% text at 320 px). */
     function place(h) {
       var t = h.querySelector('.tip'); if (!t) return;
       var r = h.getBoundingClientRect(), w = t.offsetWidth, vw = root.clientWidth, g = num('--gutter'), k = num('--notch-inset');
@@ -778,6 +780,10 @@
     });
     placeAll(); window.addEventListener('resize', placeAll);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeAll);
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(function (es) { es.forEach(function (e) { place(e.target.parentNode); }); });
+      hosts.forEach(function (h) { ro.observe(h.querySelector('.tip')); });
+    }
     document.addEventListener('keydown', function (e) {
       if (e.key !== 'Escape' && e.key !== 'Esc') return;
       if (isOpen()) { hide(); return; }
