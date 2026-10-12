@@ -168,13 +168,15 @@
     --icon: 22px;                  /* a profile mark */
     --icon-target: 48px;           /* its square tap target */
     --icon-sm: 18px;               /* a mark inside a card (copy, tick) */
+    --icon-chevron: 16px;          /* AlsoFold's chevron, beside the label */
     --tap: 44px;                   /* the smallest target anywhere */
     --flag-w: 20px;                /* both flags: one 4:3 frame (flag-icons' own shape) ... */
     --flag-h: calc(var(--flag-w) * .75); /* ... 20 x 15 px */
     --flag-rest: .88;              /* the flag's opacity at rest */
 
     /* Motion (MOTION.md). The page script reads these too, so CSS and JS keep one set of numbers. Only opacity and
-       transform move; distances are tiny; nothing loops. */
+       transform move (one exception: AlsoFold grows its height, so the slide above can make room); distances are
+       tiny; nothing loops. */
     --ease-out: cubic-bezier(.22, 1, .36, 1);   /* things arriving */
     --ease-in: cubic-bezier(.4, 0, 1, 1);       /* things leaving */
     --dur-hover: .22s;             /* colour on hover and focus (CSS) */
@@ -194,6 +196,10 @@
     --delay-in: .06s;              /* the tick starts after the copy mark leaves */
     --rise-swap: 4px;              /* copy and tick move this far */
     --hold-copied: 1.6s;           /* how long the tick stays */
+    --dur-fold-open: .42s;         /* AlsoFold opening: the rows' height, the chevron, each row */
+    --dur-fold-close: .28s;        /* ... and closing */
+    --delay-fold: .06s;            /* the first row starts after the fold does; the rest follow by --stagger */
+    --rise-fold: 6px;              /* each row drops this far into place */
     --dur-press: .18s;             /* press down: a firm spring, no bounce */
     --scale-press: .9;             /* an icon or the copy mark */
     --scale-press-flag: .985;      /* the flag link */
@@ -465,6 +471,26 @@
   .also .w { flex: none; text-align: right; color: var(--ink-3); }
   @media (hover: hover) { .also a:hover .t { color: var(--ink); } }
 
+  /* AlsoFold (12 Oct, his ask: "a V sign that will open up the 100 Day App, TimeCable and others"). Below 1000 px
+     and with JS, "Also" is a switch: the label and a chevron, the whole row a 44 px target, the rows folded under
+     it and closed at first. Opening grows the fold (grid rows 0fr to 1fr: the page's one layout animation, so the
+     slide above glides up to make room), turns the chevron over and drops the rows in a beat apart; closing fades
+     the rows and folds back faster. A closed fold is hidden from focus and screen readers (visibility). Without JS
+     the switch stays hidden and the rows simply show. */
+  .also-tg { display: flex; align-items: center; gap: var(--space-6); width: 100%; min-height: var(--tap); color: var(--ink-4); text-align: left; -webkit-tap-highlight-color: transparent; transition: color var(--dur-hover) var(--ease-out); }
+  .also-tg[hidden] { display: none; }
+  .also-tg svg { width: var(--icon-chevron); height: var(--icon-chevron); flex: none; transition: transform var(--dur-fold-close) var(--ease-in); }
+  .also[data-state="open"] .also-tg svg { transform: rotate(180deg); transition: transform var(--dur-fold-open) var(--ease-out); }
+  @media (hover: hover) { .also-tg:hover { color: var(--ink-2); } }
+  .also.fold h2 { margin: 0; }
+  .also.fold .also-body { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: 0fr; transition: grid-template-rows var(--dur-fold-close) var(--ease-in); }
+  .also.fold[data-state="open"] .also-body { grid-template-rows: 1fr; transition: grid-template-rows var(--dur-fold-open) var(--ease-out); }
+  /* min-width: 0, or the grid column grows to the rows' widest word and the page scrolls sideways at 200% zoom. */
+  .also.fold .also-in { min-width: 0; min-height: 0; overflow: hidden; }
+  .also.fold[data-state="closed"] .also-in { visibility: hidden; transition: visibility 0s linear var(--dur-fold-close); }
+  /* Once open, the rows' focus rings may reach past the fold's edge. */
+  .also.fold[data-settled] .also-in { overflow: visible; }
+
   @media (min-width: 600px) {
     .pop { grid-template-columns: auto auto auto; }
     /* One line: "Open mail" after the copy mark, a short hairline between them (a solid 1 px line drawn as a
@@ -484,6 +510,7 @@
     .also .t { color: var(--ink-3); transition: color var(--dur-hover) var(--ease-out); }
     .also .w { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
     .also li { position: relative; }
+    .also-body, .also-in { display: contents; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -553,13 +580,15 @@
   </div>
 
   <section class="also" aria-labelledby="also-h" data-enter>
-    <h2 id="also-h">ასევე</h2>
+    <h2 id="also-h"><span class="also-lb">ასევე</span><button class="also-tg" type="button" id="also-tg" aria-expanded="false" aria-controls="also-list" hidden data-goatcounter-click="also-toggle-ka" data-goatcounter-title="Also, opened or closed (phone)"><span>ასევე</span><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M6 9.5 12 15.5 18 9.5"/></svg></button></h2>
+    <div class="also-body" id="also-list"><div class="also-in">
     <ul>
       <li><a href="https://www.linkedin.com/posts/demetre-mildiani_100dayappchallenge-ai-nocode-activity-7424340373432332288-LO6H" data-goatcounter-click="also-100days-ka" data-goatcounter-title="100 Day App Challenge"><span class="t" lang="en">100 Day App Challenge</span><span class="w">პოსტი <span class="nw">LinkedIn-ზე</span></span></a></li>
       <li><a href="https://timecable.vercel.app/" data-goatcounter-click="also-timecable-ka" data-goatcounter-title="TimeCable"><span class="t" lang="en">TimeCable</span><span class="w">მოქმედი აპი</span></a></li>
       <li><a href="https://www.producthunt.com/@demetre_mildiani1" data-goatcounter-click="also-phstreak-ka" data-goatcounter-title="Product Hunt streak"><span class="t"><span class="nw">Product Hunt-ზე</span> ყოველდღე, <span class="nw">2024 წლიდან</span></span><span class="w">პროფილი</span></a></li>
       <li><a href="https://comcom.ge/ge/yvela-siaxle/comcom-is-medialabshi-startaperebistvis-ai-programirebis-shesaxeb-seminari-chatarda.page" data-goatcounter-click="also-seminar-ka" data-goatcounter-title="Seminar at ComCom MediaLab"><span class="t">სემინარი ComCom <span class="nw">MediaLab-ში</span></span><span class="w">სტატია</span></a></li>
     </ul>
+    </div></div>
   </section>
 </main>
 <script src="/assets/motion/motion-14.0.0.min.js"></script>
@@ -601,6 +630,39 @@
       bar.setAttribute('content', token('--bg'));
     }
     syncPic(); window.addEventListener('hashchange', syncPic);
+
+    /* AlsoFold: below 1000 px "Also" is a switch over its rows, closed at first (the stylesheet has the why). The
+       CSS moves the fold and the chevron; Motion drops the rows in, a beat apart. If the open list ends below the
+       screen, the page scrolls just enough to show it. */
+    var also = $('.also'), alsoLb = $('.also-lb'), alsoTg = $('#also-tg'),
+        WIDE = window.matchMedia ? matchMedia('(min-width: 1000px)') : { matches: true }, alsoOpen = false, ftok = 0;
+    function rowsOf() { return all('.also li'); }
+    function plain(els) { els.forEach(function (li) { li.style.opacity = ''; li.style.transform = ''; }); }
+    function setFold(open, animate) {
+      var t = ++ftok, rows = rowsOf(), moving = animate && calm();
+      alsoOpen = open;
+      alsoTg.setAttribute('aria-expanded', String(open));
+      also.setAttribute('data-state', open ? 'open' : 'closed'); also.removeAttribute('data-settled');
+      if (!moving) plain(rows);
+      else if (open) M.animate(rows, { opacity: [0, 1], transform: [rise('--rise-fold', -1), 'translateY(0px)'] },
+        { duration: num('--dur-fold-open'), ease: EASE_OUT, delay: M.stagger(num('--stagger'), { startDelay: num('--delay-fold') }) });
+      else M.animate(rows, { opacity: 0 }, { duration: num('--dur-close'), ease: EASE_IN });
+      if (open) setTimeout(function () {
+        if (t !== ftok) return;
+        also.setAttribute('data-settled', '');
+        var over = also.getBoundingClientRect().bottom + num('--stage-floor') - root.clientHeight;
+        if (animate && over > 0) window.scrollBy({ top: over, behavior: moving ? 'smooth' : 'auto' });
+      }, moving ? num('--dur-fold-open') * 1000 + 40 : 0);
+    }
+    function foldMode() {
+      var fold = !WIDE.matches;
+      also.classList.toggle('fold', fold); alsoTg.hidden = !fold; alsoLb.hidden = fold;
+      if (fold) setFold(alsoOpen, false);
+      else { ++ftok; also.removeAttribute('data-state'); also.removeAttribute('data-settled'); plain(rowsOf()); }
+    }
+    alsoTg.addEventListener('click', function () { setFold(!alsoOpen, true); });
+    foldMode();
+    if (WIDE.addEventListener) WIDE.addEventListener('change', foldMode); else if (WIDE.addListener) WIDE.addListener(foldMode);
 
     /* Entrance: the print comes up first, like a stage light; the words follow, a beat apart. Only while the gate is
        still up: on a slow connection the 1.2 s failsafe may already have shown the page, and fading it out to fade it
