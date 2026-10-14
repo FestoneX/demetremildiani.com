@@ -25,7 +25,10 @@
 <meta property="og:locale:alternate" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@MildianiDemetre">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23131416'/%3E%3Crect x='11' y='7' width='10' height='12.5' fill='%23F2F2F4'/%3E%3Crect x='7' y='23.5' width='18' height='1.5' fill='%239A9CA2'/%3E%3C/svg%3E">
+<meta property="og:site_name" content="დემეტრე მილდიანი">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script>
   /* Before first paint.
      Theme: always dark, whatever the system asks (7 Oct, his call: "keep the dark theme the default and hide the mode
@@ -53,13 +56,15 @@
 </script>
 <link rel="preconnect" href="https://api.fontshare.com">
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Switzer (Fontshare, ITF Free Font License v2.0: free for commercial use, self-hosting allowed, redistribution
      banned, so it is loaded from Fontshare's CSS API and never committed to this public repo). Chosen by Demetre on 7 Oct
-     2026 from research/fonts-board.html. Noto Sans Georgian (OFL) carries the Georgian. -->
-<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@300,400,500&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300..500&display=swap">
+     2026 from research/fonts-board.html. Only the two weights the page uses (300 the name, 400 the rest). Noto Sans
+     Georgian (OFL) carries the Georgian and is linked on /ka/ only (14 Oct): the English page shows no Georgian
+     glyph, so it no longer waits on Google's stylesheet. -->
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@300,400&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300..400&display=swap">
 <style>
   /* Design read: a keynote slide at night. One lit portrait on a dark stage, the name set large and light under it,
      one grey line, and under that one quiet row of monochrome marks for the profiles and email. Everything sits on
@@ -557,7 +562,7 @@
       <picture>
         <source id="pic-light" media="not all" type="image/webp" srcset="/assets/img/demetre-mildiani-portrait-light-600.webp 600w, /assets/img/demetre-mildiani-portrait-light-1200.webp 1200w" sizes="(min-width: 1000px) 240px, (min-width: 600px) 168px, 144px">
         <source type="image/webp" srcset="/assets/img/demetre-mildiani-portrait-dark-600.webp 600w, /assets/img/demetre-mildiani-portrait-dark-1200.webp 1200w" sizes="(min-width: 1000px) 240px, (min-width: 600px) 168px, 144px">
-        <img src="/assets/img/demetre-mildiani-portrait-dark-600.jpg" srcset="/assets/img/demetre-mildiani-portrait-dark-600.jpg 600w, /assets/img/demetre-mildiani-portrait-dark-1200.jpg 1200w" sizes="(min-width: 1000px) 240px, (min-width: 600px) 168px, 144px" width="600" height="750" alt="დემეტრე მილდიანი, იღიმის, მუქ სვიტერში, მუქ ნაცრისფერ ფონზე" decoding="async">
+        <img src="/assets/img/demetre-mildiani-portrait-dark-600.jpg" srcset="/assets/img/demetre-mildiani-portrait-dark-600.jpg 600w, /assets/img/demetre-mildiani-portrait-dark-1200.jpg 1200w" sizes="(min-width: 1000px) 240px, (min-width: 600px) 168px, 144px" width="600" height="750" alt="დემეტრე მილდიანი, იღიმის, მუქ სვიტერში, მუქ ნაცრისფერ ფონზე" decoding="async" fetchpriority="high">
       </picture>
     </figure>
 
@@ -664,17 +669,21 @@
     foldMode();
     if (WIDE.addEventListener) WIDE.addEventListener('change', foldMode); else if (WIDE.addListener) WIDE.addListener(foldMode);
 
-    /* Entrance: the print comes up first, like a stage light; the words follow, a beat apart. Only while the gate is
-       still up: on a slow connection the 1.2 s failsafe may already have shown the page, and fading it out to fade it
-       back in would be the very flash the gate exists to prevent. */
+    /* Entrance: the print comes up first, like a stage light; then five steps a beat apart, in reading order: the
+       name, the line, the marks (together, as one block), Also, and last the flag, which sits outside the composition.
+       Done by 0.86 s (the build checks the 0.9 s ceiling). The marks animate as their li, never ul.icons: a transform
+       left on the ul would make it a stacking context, and Also, later in the page, would then paint over the tips.
+       Only while the gate is still up: on a slow connection the 1.2 s failsafe may already have shown the page, and
+       fading it out to fade it back in would be the very flash the gate exists to prevent. */
     function enter() {
       var gated = root.classList.contains('m-pre');
       if (calm() && gated) {
         M.animate('.pic', { opacity: [0, 1], transform: ['scale(' + num('--scale-pic-from') + ')', 'scale(1)'] },
           { duration: num('--dur-enter-pic'), ease: EASE_OUT, delay: num('--delay-pic') });
-        M.animate(all('.name, .line, .icons li, .top, .also'),
-          { opacity: [0, 1], transform: [rise('--rise-enter'), 'translateY(0px)'] },
-          { duration: num('--dur-enter'), ease: EASE_OUT, delay: M.stagger(num('--stagger'), { startDelay: num('--delay-enter') }) });
+        [all('.name'), all('.line'), all('.icons li'), all('.also'), all('.top')].forEach(function (els, i) {
+          M.animate(els, { opacity: [0, 1], transform: [rise('--rise-enter'), 'translateY(0px)'] },
+            { duration: num('--dur-enter'), ease: EASE_OUT, delay: num('--delay-enter') + i * num('--stagger') });
+        });
       }
       root.classList.remove('m-pre');
     }
