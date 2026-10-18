@@ -153,6 +153,7 @@
     --gap-line-icons: var(--space-28); /* line to marks */
     --gap-icons: var(--space-6);   /* between marks */
     --gap-slide-also: var(--space-40); /* slide to Also (phone) */
+    --fold-lift: var(--space-20);   /* AlsoFold sits this much higher off the floor (18 Oct, his "a bit up") */
     --card-offset: var(--space-8);   /* from the row to a card under it */
 
     /* Lines, rings, corners. */
@@ -480,12 +481,15 @@
      slide above glides up to make room), turns the chevron over and drops the rows in a beat apart; closing fades
      the rows and folds back faster. A closed fold is hidden from focus and screen readers (visibility). Without JS
      the switch stays hidden and the rows simply show. */
-  .also-tg { display: flex; align-items: center; gap: var(--space-6); width: 100%; min-height: var(--tap); color: var(--ink-4); text-align: left; -webkit-tap-highlight-color: transparent; transition: color var(--dur-hover) var(--ease-out); }
+  .also-tg { display: flex; align-items: center; justify-content: center; gap: var(--space-6); width: 100%; min-height: var(--tap); color: var(--ink-3); text-align: left; -webkit-tap-highlight-color: transparent; transition: color var(--dur-hover) var(--ease-out); }
   .also-tg[hidden] { display: none; }
   .also-tg svg { width: var(--icon-chevron); height: var(--icon-chevron); flex: none; transition: transform var(--dur-fold-close) var(--ease-in); }
   .also[data-state="open"] .also-tg svg { transform: rotate(180deg); transition: transform var(--dur-fold-open) var(--ease-out); }
   @media (hover: hover) { .also-tg:hover { color: var(--ink-2); } }
   .also.fold h2 { margin: 0; }
+  /* 18 Oct, his "center pelase and a bit up": the switch sits on the centre axis like everything above it, one ink
+     step brighter (it is a control: --ink-3, 6.7:1), and --fold-lift higher off the floor. */
+  .also.fold { margin-bottom: var(--fold-lift); }
   .also.fold .also-body { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: 0fr; transition: grid-template-rows var(--dur-fold-close) var(--ease-in); }
   .also.fold[data-state="open"] .also-body { grid-template-rows: 1fr; transition: grid-template-rows var(--dur-fold-open) var(--ease-out); }
   /* min-width: 0, or the grid column grows to the rows' widest word and the page scrolls sideways at 200% zoom. */
