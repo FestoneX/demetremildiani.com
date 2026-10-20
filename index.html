@@ -31,15 +31,6 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <script>
-  /* Before first paint.
-     Theme: always dark, whatever the system asks (7 Oct, his call: "keep the dark theme the default and hide the mode
-     switch"). The day theme is kept for later, reachable only by "#light" in the address; there is no visible switch.
-     Language: each page is one language (/ English, /ka/ Georgian). Old links with "?lang=ka" go to /ka/ and
-     "?lang=en" to /; any other query and the hash ride along. The old "last choice" key is cleared.
-     Motion gate (MOTION.md, pattern 0): only when JS runs and motion is allowed are the entrance blocks hidden, and a
-     failsafe shows them after 1.2 s whatever happens. Once the failsafe has shown them, the entrance never runs: the
-     page script checks the gate is still up before it animates anything. The 1200 ms is --gate-failsafe (this runs
-     before the stylesheet exists, so it keeps its own copy; build_dist.py checks the two match). */
   (function () {
     var d = document.documentElement; d.classList.add('js');
     function theme() { if (location.hash === '#light') d.setAttribute('data-theme', 'light'); else d.removeAttribute('data-theme'); }
@@ -57,67 +48,40 @@
 </script>
 <link rel="preconnect" href="https://api.fontshare.com">
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
-<!-- Switzer (Fontshare, ITF Free Font License v2.0: free for commercial use, self-hosting allowed, redistribution
-     banned, so it is loaded from Fontshare's CSS API and never committed to this public repo). Chosen by Demetre on 7 Oct
-     2026 from research/fonts-board.html. Only the two weights the page uses (300 the name, 400 the rest). Noto Sans
-     Georgian (OFL) carries the Georgian and is linked on /ka/ only (14 Oct): the English page shows no Georgian
-     glyph, so it no longer waits on Google's stylesheet. -->
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@300,400&display=swap">
 <style>
-  /* Design read: a keynote slide at night. One lit portrait on a dark stage, the name set large and light under it,
-     one grey line, and under that one quiet row of monochrome marks for the profiles and email. Everything sits on
-     one centre axis; the rest is black.
-     The light is the photograph's own: each print's backdrop is repainted so its edges meet the page at the page's
-     own tone (n4-keynote/photo/prints.py), so the print has no visible frame and the soft pool of light around his
-     head, which is the seamless's photographed falloff, is the only glow on the page.
-     Type: Switzer, light (300) at size; Noto Sans Georgian carries the Georgian.
-     Theme: dark always, whatever the system asks (7 Oct). The day palette is kept for later; only "#light" in the
-     address turns it on, and nothing on the page links there.
-     The design system: DESIGN.md (rules) and docs/design-system.html (the living style guide, written by
-     build_dist.py from this file). */
-
-  /* ==== TOKENS ======================================================================================================
-     Every colour, size, space, radius, duration and layer on the page is a token here; the rules further down only
-     read tokens (no raw numbers but 0, 100%, auto and the like). Tokens change in five places only, all in this
-     block: the base, Georgian, the 600 px and 1000 px breakpoints, and the kept day theme. A component's layout may
-     switch at a breakpoint (the email card goes to one line from 600 px, Also to one line from 1000 px), but every
-     size it uses there is still a token; a component never tests the language.
-     Format (build_dist.py parses it for the style guide): one token per line, "--name: value;", an optional
-     comment after it on the same line. */
+  
   :root {
-    /* Colour roles. Contrast ratios are against --bg. */
-    --bg: #131416;                 /* the stage; = the dark print's edge tone, so the print melts into it */
-    --surface: #1B1C1F;            /* a raised card (EmailCard, Tooltip): one step off the stage */
-    --ink: #F2F2F4;                /* 16.5:1. The name, and whatever is under the pointer, focused or open */
-    --ink-2: #BFC1C6;              /* 10.2:1. Words in a list or card: the address, the Also titles */
-    --ink-3: #9A9CA2;              /* 6.7:1. Resting marks, the grey line, card controls */
-    --ink-4: #818389;              /* 4.9:1. Labels ("Also") */
-    --hairline: #26272B;           /* rules between rows */
-    --hairline-strong: #3E3F44;    /* card borders, the flag ring, underlines */
-    --focus: var(--ink);           /* the keyboard ring */
-    --shadow-card: 0 14px 32px -16px rgba(0, 0, 0, .7);   /* the one shadow: under a raised card */
-
-    /* Type. Two families; one weight change (the name is light). */
-    --font-sans: "Switzer", "Noto Sans Georgian", system-ui, sans-serif;   /* everything */
-    --font-ka: "Noto Sans Georgian", sans-serif;   /* the Georgian name */
-    --weight-regular: 400;         /* everything but the name */
-    --weight-light: 300;           /* the name only */
-    --weight-name: var(--weight-light); /* the name; heavier in Georgian (below) */
-    --text-body: 1rem;             /* body */
-    --leading-body: 1.45;          /* running text */
-    --text-small: .875rem;         /* small: Also; label: "Also" in ink-4 */
-    --text-card: .875rem;          /* EmailCard and Tooltip text */
-    --leading-card: 1.45;          /* EmailCard and Tooltip text. No Georgian value: a card's text is Latin on both pages (the handle, the address), so a card is the same size on / and /ka/ */
-    --text-line: 1.0625rem;        /* line: the one sentence under the name */
-    --leading-line: 1.45;          /* the line */
-    --tracking-line: -.006em;      /* the line, a hair tight */
-    --font-name: var(--font-sans); /* the name's family: Switzer, or Noto Sans Georgian on /ka/ */
-    --text-name: clamp(2.125rem, 10.8vw, 2.75rem);   /* name: the one large thing */
-    --leading-name: 1.04;          /* the name, set solid */
-    --tracking-name: -.03em;       /* the name, tight */
-    --underline-offset: .3em;      /* an underlined link's line sits this far under the text */
-
-    /* Space. A closed set on a 2 px grid, named by size in px (as GitHub's Primer does). Use only these. */
+    --bg: #131416;                 
+    --surface: #1B1C1F;            
+    --ink: #F2F2F4;                
+    --ink-2: #BFC1C6;              
+    --ink-3: #9A9CA2;              
+    --ink-4: #818389;              
+    --hairline: #26272B;           
+    --hairline-strong: #3E3F44;    
+    --focus: var(--ink);           
+    --shadow-card: 0 14px 32px -16px rgba(0, 0, 0, .7);   
+    
+    --font-sans: "Switzer", "Noto Sans Georgian", system-ui, sans-serif;   
+    --font-ka: "Noto Sans Georgian", sans-serif;   
+    --weight-regular: 400;         
+    --weight-light: 300;           
+    --weight-name: var(--weight-light); 
+    --text-body: 1rem;             
+    --leading-body: 1.45;          
+    --text-small: .875rem;         
+    --text-card: .875rem;          
+    --leading-card: 1.45;          
+    --text-line: 1.0625rem;        
+    --leading-line: 1.45;          
+    --tracking-line: -.006em;      
+    --font-name: var(--font-sans); 
+    --text-name: clamp(2.125rem, 10.8vw, 2.75rem);   
+    --leading-name: 1.04;          
+    --tracking-name: -.03em;       
+    --underline-offset: .3em;      
+    
     --space-2: 2px;
     --space-4: 4px;
     --space-6: 6px;
@@ -137,92 +101,80 @@
     --space-56: 56px;
     --space-72: 72px;
     --space-88: 88px;
-
-    /* Layout and rhythm: the stage, then the slide's gaps from top to bottom. */
-    --gutter: var(--space-16);     /* the stage's side padding */
-    --stage-floor: calc(var(--space-32) + env(safe-area-inset-bottom));   /* under Also */
-    --measure: 34rem;              /* the slide and Also */
-    --measure-slide: var(--measure);   /* the slide alone; wider on a desktop */
-    --measure-line: 24em;          /* the line wraps before this */
-    --slide-pad-top: var(--space-56); /* above the portrait */
-    --slide-pad-bottom: var(--space-8); /* under the marks */
-    --key-top: calc(var(--gutter) - (var(--tap) + var(--hairline-w) - var(--flag-h)) / 2); /* the flag sits a gutter from the top ... */
-    --key-right: var(--space-4);    /* ... and from the right */
-    --pic-w: clamp(124px, 37vw, 144px);   /* the portrait (keep the <img sizes> in step) */
-    --gap-pic-name: var(--space-18); /* portrait to name */
-    --gap-name-line: var(--space-8); /* name to line */
-    --gap-line-icons: var(--space-28); /* line to marks */
-    --gap-icons: var(--space-6);   /* between marks */
-    --gap-slide-also: var(--space-40); /* slide to Also (phone) */
-    --fold-lift: var(--space-36);   /* AlsoFold sits this much higher off the floor (18 Oct, his "a bit up", then "a bit more above") */
-    --card-offset: var(--space-8);   /* from the row to a card under it */
-
-    /* Lines, rings, corners. */
-    --hairline-w: 1px;             /* every rule, border and ring */
-    --focus-w: 2px;                /* the keyboard ring's weight */
-    --focus-offset: 3px;           /* its gap from the thing (0 on an icon, -4px inside a card) */
-    --radius-hair: 2px;            /* the flag, the notch's tip */
-    --radius-focus: 3px;           /* the default focus ring */
-    --radius-control: 10px;        /* a control inside a card (copy) */
-    --radius-icon: 12px;           /* an icon link's focus ring */
-    --radius-card: 14px;           /* EmailCard, Tooltip */
-    --notch: 10px;                 /* the card's pointer, a rotated square */
-    --notch-inset: 18px;           /* the notch keeps this far from the card's ends */
-
-    /* Icons and targets. */
-    --icon: 22px;                  /* a profile mark */
-    --icon-target: 48px;           /* its square tap target */
-    --icon-sm: 18px;               /* a mark inside a card (copy, tick) */
-    --icon-chevron: 16px;          /* AlsoFold's chevron, beside the label */
-    --tap: 44px;                   /* the smallest target anywhere */
-    --flag-w: 20px;                /* both flags: one 4:3 frame (flag-icons' own shape) ... */
-    --flag-h: calc(var(--flag-w) * .75); /* ... 20 x 15 px */
-    --flag-rest: .72;              /* the flag's opacity at rest: it recedes, the name leads (his 8B, 18 Oct) */
-
-    /* Motion (MOTION.md). The page script reads these too, so CSS and JS keep one set of numbers. Only opacity and
-       transform move (one exception: AlsoFold grows its height, so the slide above can make room); distances are
-       tiny; nothing loops. */
-    --ease-out: cubic-bezier(.22, 1, .36, 1);   /* things arriving */
-    --ease-in: cubic-bezier(.4, 0, 1, 1);       /* things leaving */
-    --dur-hover: .22s;             /* colour on hover and focus (CSS) */
-    --dur-enter: .56s;             /* entrance, per block */
-    --dur-enter-pic: .7s;          /* the portrait comes up first, like a stage light */
-    --delay-pic: .04s;             /* before the portrait */
-    --delay-enter: .12s;           /* the words start after the portrait */
-    --stagger: .045s;              /* between entrance blocks */
-    --rise-enter: 6px;             /* entrance: blocks rise this far */
-    --scale-pic-from: 1.012;       /* the portrait settles from this scale */
-    --dur-open: .22s;              /* a card opening */
-    --rise-open: 4px;              /* a card drops this far into place */
-    --dur-close: .14s;             /* a card closing */
-    --rise-close: 2px;             /* and lifts this far on its way out */
-    --dur-in: .26s;                /* a label or mark swapping in (copy to tick) */
-    --dur-out: .18s;               /* ... and out */
-    --delay-in: .06s;              /* the tick starts after the copy mark leaves */
-    --rise-swap: 4px;              /* copy and tick move this far */
-    --hold-copied: 1.6s;           /* how long the tick stays */
-    --dur-fold-open: .42s;         /* AlsoFold opening: the rows' height, the chevron, each row */
-    --dur-fold-close: .28s;        /* ... and closing */
-    --delay-fold: .06s;            /* the first row starts after the fold does; the rest follow by --stagger */
-    --rise-fold: 6px;              /* each row drops this far into place */
-    --dur-press: .18s;             /* press down: a firm spring, no bounce */
-    --scale-press: .9;             /* an icon or the copy mark */
-    --scale-press-flag: .985;      /* the flag link */
-    --dur-settle: .45s;            /* release: a spring with a hint of bounce */
-    --bounce-settle: .15;          /* the hint of bounce */
-    --delay-tip: .3s;              /* Tooltip: a hover waits this long, so running the pointer along the row flashes nothing */
-    --gate-failsafe: 1.2s;         /* the head script shows the page by then whatever happens (it runs before CSS, so it keeps its own copy; the build checks they match) */
-
-    /* Layers. */
-    --z-key: 1;                    /* the flag link */
-    --z-card: 2;                   /* EmailCard, Tooltip (the card comes later in the page, so it covers a tip) */
-
+    
+    --gutter: var(--space-16);     
+    --stage-floor: calc(var(--space-32) + env(safe-area-inset-bottom));   
+    --measure: 34rem;              
+    --measure-slide: var(--measure);   
+    --measure-line: 24em;          
+    --slide-pad-top: var(--space-56); 
+    --slide-pad-bottom: var(--space-8); 
+    --key-top: calc(var(--gutter) - (var(--tap) + var(--hairline-w) - var(--flag-h)) / 2); 
+    --key-right: var(--space-4);    
+    --pic-w: clamp(124px, 37vw, 144px);   
+    --gap-pic-name: var(--space-18); 
+    --gap-name-line: var(--space-8); 
+    --gap-line-icons: var(--space-28); 
+    --gap-icons: var(--space-6);   
+    --gap-slide-also: var(--space-40); 
+    --fold-lift: var(--space-36);   
+    --card-offset: var(--space-8);   
+    
+    --hairline-w: 1px;             
+    --focus-w: 2px;                
+    --focus-offset: 3px;           
+    --radius-hair: 2px;            
+    --radius-focus: 3px;           
+    --radius-control: 10px;        
+    --radius-icon: 12px;           
+    --radius-card: 14px;           
+    --notch: 10px;                 
+    --notch-inset: 18px;           
+    
+    --icon: 22px;                  
+    --icon-target: 48px;           
+    --icon-sm: 18px;               
+    --icon-chevron: 16px;          
+    --tap: 44px;                   
+    --flag-w: 20px;                
+    --flag-h: calc(var(--flag-w) * .75); 
+    --flag-rest: .72;              
+    
+    --ease-out: cubic-bezier(.22, 1, .36, 1);   
+    --ease-in: cubic-bezier(.4, 0, 1, 1);       
+    --dur-hover: .22s;             
+    --dur-enter: .56s;             
+    --dur-enter-pic: .7s;          
+    --delay-pic: .04s;             
+    --delay-enter: .12s;           
+    --stagger: .045s;              
+    --rise-enter: 6px;             
+    --scale-pic-from: 1.012;       
+    --dur-open: .22s;              
+    --rise-open: 4px;              
+    --dur-close: .14s;             
+    --rise-close: 2px;             
+    --dur-in: .26s;                
+    --dur-out: .18s;               
+    --delay-in: .06s;              
+    --rise-swap: 4px;              
+    --hold-copied: 1.6s;           
+    --dur-fold-open: .42s;         
+    --dur-fold-close: .28s;        
+    --delay-fold: .06s;            
+    --rise-fold: 6px;              
+    --dur-press: .18s;             
+    --scale-press: .9;             
+    --scale-press-flag: .985;      
+    --dur-settle: .45s;            
+    --bounce-settle: .15;          
+    --delay-tip: .3s;              
+    --gate-failsafe: 1.2s;         
+    
+    --z-key: 1;                    
+    --z-card: 2;                   
     color-scheme: dark;
   }
-  /* Georgian: its own sizes, leading and no tracking (Noto Sans Georgian is wider, taller and has no capitals).
-     Never uppercase, never letter-spaced. The root selector outranks the breakpoints' plain :root, so a Georgian value
-     holds until a Georgian breakpoint changes it; [lang="ka"] alone lets a Georgian block inside an English page (the
-     style guide) take the same values. */
   :root[lang="ka"], [lang="ka"] {
     --leading-body: 1.55;
     --font-name: var(--font-ka);
@@ -232,9 +184,9 @@
     --text-line: .9375rem;
     --leading-line: 1.55;
     --tracking-line: 0;
-    --measure-line: 32em;          /* Georgian words run longer: the line keeps to one line from 600 px */
+    --measure-line: 32em;          
     --gap-name-line: var(--space-6);
-    --weight-name: 380;            /* Noto's strokes at 0.74x the English size read frail at 300; 380 matches the English stroke (his 6D, 18 Oct) */
+    --weight-name: 380;            
   }
   @media (min-width: 600px) {
     :root {
@@ -259,12 +211,10 @@
       --text-line: 1.0625rem;
     }
   }
-  /* Sizes and gaps follow the screen's height as well as its width, so the whole slide stays on the first screen from
-     a 1280 x 720 laptop to a 1920 x 1080 monitor. */
   @media (min-width: 1000px) {
     :root {
       --gutter: var(--space-48);
-      --stage-floor: var(--space-18);   /* 30 px to the floor line's text, as the 44 px links keep 12 px under it */
+      --stage-floor: var(--space-18);   
       --measure-slide: 60rem;
       --slide-pad-top: clamp(var(--space-40), 7vh, var(--space-72));
       --slide-pad-bottom: clamp(var(--space-28), 5vh, var(--space-56));
@@ -288,8 +238,6 @@
       --gap-name-line: var(--space-10);
     }
   }
-  /* Day, kept for later: the same stage with the house lights up. A cool studio grey, the light print of the same
-     sitting, whose edges are the page tone and whose pool around the head is a few levels lighter; ink-black type. */
   :root[data-theme="light"] {
     --bg: #E8E9EB;
     --surface: #F3F4F5;
@@ -301,8 +249,6 @@
     --hairline-strong: #A9ABB0;
     color-scheme: light;
   }
-  /* ==== END TOKENS ================================================================================================== */
-
   *, *::before, *::after { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--bg); }
   body {
@@ -311,45 +257,32 @@
     -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-wrap: break-word;
     font-feature-settings: "kern" 1;
   }
-  a { color: inherit; text-decoration: none; }
-  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; }
+  a { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .also a:active .t, .pop .open:active { color: var(--ink); }
   :focus-visible { outline: var(--focus-w) solid var(--focus); outline-offset: var(--focus-offset); border-radius: var(--radius-focus); }
   .nw { white-space: nowrap; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
   .m-pre [data-enter] { opacity: 0; }
-
-  /* The stage: one centre axis. */
+  
   .stage {
     position: relative; min-height: 100vh; min-height: 100svh;
     display: flex; flex-direction: column;
     padding: 0 var(--gutter) var(--stage-floor);
   }
-  /* The slide sits in the middle of the first screen, "Also" on the floor under it. */
   .slide { width: 100%; max-width: var(--measure-slide); margin: auto; padding: var(--slide-pad-top) 0 var(--slide-pad-bottom); }
-
-  /* FlagLink. The language key: a small flag in the top corner, outside the composition, linking to the other
-     language's page (6 Oct: a flag, not a word; 7 Oct: a real link to /ka/ and back). */
+  
   .top { position: absolute; top: var(--key-top); right: var(--key-right); z-index: var(--z-key); }
-  /* The target is one hairline taller than --tap (45 px), so the 15 px flag centres on whole pixels: in a 44 px box it
-     sat at 14.5 px and its top and bottom edges blurred on a 1x screen. */
   .lang {
     display: inline-flex; align-items: center; min-height: calc(var(--tap) + var(--hairline-w)); min-width: var(--tap); padding: 0 var(--space-12);
   }
-  /* Both flags are one component (7 Oct, his ask: "Georgian emoji and USA emoji look different, please use the same
-     components"): both are drawn by one open set, lipis/flag-icons 7.5.0 (MIT, vendor/flag-icons/), in its 4:3 frame,
-     and here they get the same 20 x 15 box, the same corner, the same hairline ring (which also keeps the white of
-     both flags on the light page), the same resting opacity and the same place. */
   .lang .flag { display: block; width: var(--flag-w); height: var(--flag-h); overflow: hidden; border-radius: var(--radius-hair); box-shadow: 0 0 0 var(--hairline-w) var(--hairline-strong); opacity: var(--flag-rest); transition: opacity var(--dur-hover) var(--ease-out); }
   @media (hover: hover) { .lang:hover .flag { opacity: 1; } }
   .lang:focus-visible .flag { opacity: 1; }
-
-  /* Portrait: a hard-edged 4:5 print on the centre axis. No frame, no shadow: the backdrop's edges are the
-     page's own tone, so only the sweater's cut at the bottom draws an edge, and the pool of light around his head is
-     in the photograph. */
+  
   .pic { margin: 0 auto; width: var(--pic-w); aspect-ratio: 4 / 5; background: var(--bg); }
   .pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
-
-  /* Name: the one large thing, light, tight. Only the name is full white. Line: one grey sentence. */
+  
   .name {
     margin: var(--gap-pic-name) 0 0; text-align: center; font-family: var(--font-name);
     font-weight: var(--weight-name); font-size: var(--text-name); line-height: var(--leading-name); letter-spacing: var(--tracking-name);
@@ -358,12 +291,7 @@
     margin: var(--gap-name-line) auto 0; max-width: var(--measure-line); text-align: center; color: var(--ink-3);
     font-size: var(--text-line); line-height: var(--leading-line); letter-spacing: var(--tracking-line); text-wrap: balance;
   }
-
-  /* IconLink. The profiles and email: one row of monochrome marks (7 Oct, his ask: "icons instead of LinkedIn ...
-     black and white type icons"), in the order he named them: LinkedIn, Facebook, X, Product Hunt, then email. The
-     four brand marks are Simple Icons (CC0), the envelope is drawn for the page, filled like them. They rest in the
-     muted grey and come up to full ink under the pointer and on focus; never a brand colour, no circles, no pills.
-     Each target is a square (48 px on a phone, the glyph 22 px), so a thumb has room between them. */
+  
   .icons { list-style: none; margin: var(--gap-line-icons) 0 0; padding: 0; display: flex; justify-content: center; gap: var(--gap-icons); }
   .ico {
     display: grid; place-items: center; width: var(--icon-target); height: var(--icon-target); border-radius: var(--radius-icon);
@@ -372,15 +300,7 @@
   .ico svg { display: block; width: var(--icon); height: var(--icon); }
   @media (hover: hover) { .ico:hover { color: var(--ink); } }
   .ico:focus-visible { color: var(--ink); outline-offset: 0; border-radius: var(--radius-icon); }
-
-  /* EmailCard (7 Oct, his ask: "a copy icon, not a copy button ... we have an email [icon], we don't need [the address
-     line] anymore"). The envelope in the row is the one way in. Without JS it is a plain mailto link. With JS a tap
-     opens a small quiet card just under the row, on the centre axis: the address (plain text, a long press selects all
-     of it), a copy mark (two overlapping sheets, drawn in stroke at the weight of the row's marks; it turns into a
-     tick for a moment after a tap) and "Open mail", the mailto. Not a modal: no overlay, nothing behind it dims, the
-     page does not move. It closes on Escape, on a tap anywhere else, and on a second tap of the envelope.
-     The card floats (absolute, under the row) so opening it shifts nothing. On a phone the address and the copy mark
-     share the first line and "Open mail" takes the second, under a hairline; from 600 px it is one line. */
+  
   .reach { position: relative; }
   .pop {
     position: absolute; z-index: var(--z-card); top: calc(100% + var(--card-offset)); left: 0; right: 0; margin: 0 auto;
@@ -391,8 +311,6 @@
     box-shadow: var(--shadow-card);
   }
   .pop[hidden] { display: none; }
-  /* A small notch on the card's top edge points at the envelope (the script sets --cx to the envelope's centre), and
-     the envelope stays at full ink while its card is open: that is what ties the two together. */
   .pop::before {
     content: ""; position: absolute; top: calc(var(--notch) / -2 - var(--hairline-w)); left: var(--cx, 50%);
     width: var(--notch); height: var(--notch); margin-left: calc(var(--notch) / -2);
@@ -421,22 +339,7 @@
   }
   .pop .copy:focus-visible { outline-offset: calc(var(--space-4) * -1); border-radius: var(--radius-control); }
   .pop .open:focus-visible { outline-offset: calc(var(--space-4) * -1); }
-
-  /* Tooltip (7 Oct, his ask: "should we have the same [pop-up] for each link?"; Claude's recommendation, taken: a
-     label, not a card, because a profile has one action and a tap should go straight there). Under each profile mark,
-     the handle the link goes to, in the EmailCard's material and motion: the same surface, strong hairline, corner,
-     shadow, notch and offset, dropping in by --rise-open over --dur-open and leaving over --dur-close. One line, in
-     --text-card and --ink-2.
-     When: on hover after --delay-tip, and only with a fine pointer (a mouse or trackpad: never on touch, where a tap
-     must just follow the link); at once on keyboard focus (:focus-visible, so a tap never shows it). Never while the
-     email card is open (and the card, later in the page at the same layer, would cover one anyway).
-     WCAG 1.4.13: the tip is part of its host, so the pointer can move onto it across the bridge (::after) without
-     losing it; Escape hides it (the page script sets data-state="dismissed" until the pointer or focus leaves); it holds
-     nothing focusable, so focus never stops in it. The link names it with aria-describedby: a screen reader says
-     "LinkedIn, link, in/demetre-mildiani".
-     On screen: the tip is centred under its mark, and the page script slides it sideways (--tip-dx) when that would
-     take it closer than --gutter to the window's edge (LinkedIn's, at 320 px or a laptop at 400% zoom), and sets --cx
-     so the notch stays over the mark, as the EmailCard's notch does. Without JS it stays centred. */
+  
   .tip-host { position: relative; z-index: var(--z-card); }
   .tip {
     position: absolute; top: calc(100% + var(--card-offset)); left: calc(50% + var(--tip-dx, 0px));
@@ -465,9 +368,7 @@
     transition: opacity var(--dur-open) var(--ease-out), transform var(--dur-open) var(--ease-out), visibility 0s;
   }
   .tip-host[data-state="dismissed"] .tip, .icons:has([aria-expanded="true"]) .tip { opacity: 0; visibility: hidden; pointer-events: none; transition: none; }
-
-  /* AlsoList: after the slide, small and grey. The row padding is 12 px less the hairline above it, so the text
-     keeps its baseline inside the 44 px row. */
+  
   .also { width: 100%; max-width: var(--measure); margin: var(--gap-slide-also) auto 0; font-size: var(--text-small); }
   .also h2 { margin: 0 0 var(--space-4); font: inherit; color: var(--ink-4); }
   .also ul { list-style: none; margin: 0; padding: 0; }
@@ -475,56 +376,36 @@
   .also .t { min-width: 0; color: var(--ink-2); }
   .also .w { flex: none; text-align: right; color: var(--ink-3); }
   @media (hover: hover) { .also a:hover .t { color: var(--ink); } }
-
-  /* AlsoFold (12 Oct, his ask: "a V sign that will open up the 100 Day App, TimeCable and others"). Below 1000 px
-     and with JS, "Also" is a switch: the label and a chevron, the whole row a 44 px target, the rows folded under
-     it and closed at first. Opening grows the fold (grid rows 0fr to 1fr: the page's one layout animation, so the
-     slide above glides up to make room), turns the chevron over and drops the rows in a beat apart; closing fades
-     the rows and folds back faster. A closed fold is hidden from focus and screen readers (visibility). Without JS
-     the switch stays hidden and the rows simply show. */
+  
   .also-tg { display: flex; align-items: center; justify-content: center; gap: var(--space-6); width: 100%; min-height: var(--tap); color: var(--ink-3); text-align: left; -webkit-tap-highlight-color: transparent; transition: color var(--dur-hover) var(--ease-out); }
   .also-tg[hidden] { display: none; }
   .also-tg svg { width: var(--icon-chevron); height: var(--icon-chevron); flex: none; transition: transform var(--dur-fold-close) var(--ease-in); }
   .also[data-state="open"] .also-tg svg { transform: rotate(180deg); transition: transform var(--dur-fold-open) var(--ease-out); }
   @media (hover: hover) { .also-tg:hover { color: var(--ink-2); } }
   .also.fold h2 { margin: 0; }
-  /* 18 Oct, his "center pelase and a bit up": the switch sits on the centre axis like everything above it, one ink
-     step brighter (it is a control: --ink-3, 6.7:1), and --fold-lift higher off the floor. */
   .also.fold { margin-bottom: var(--fold-lift); }
   .also.fold .also-body { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: 0fr; transition: grid-template-rows var(--dur-fold-close) var(--ease-in); }
   .also.fold[data-state="open"] .also-body { grid-template-rows: 1fr; transition: grid-template-rows var(--dur-fold-open) var(--ease-out); }
-  /* min-width: 0, or the grid column grows to the rows' widest word and the page scrolls sideways at 200% zoom. */
   .also.fold .also-in { min-width: 0; min-height: 0; overflow: hidden; }
   .also.fold[data-state="closed"] .also-in { visibility: hidden; transition: visibility 0s linear var(--dur-fold-close); }
-  /* Once open, the rows' focus rings may reach past the fold's edge. */
   .also.fold[data-settled] .also-in { overflow: visible; }
-
   @media (min-width: 600px) {
     .pop { grid-template-columns: auto auto auto; }
-    /* One line: "Open mail" after the copy mark, a short hairline between them (a solid 1 px line drawn as a
-       background, not a gradient); still 44 px tall to the finger. */
     .pop .open { grid-column: auto; border-top: 0; padding: 0 var(--space-18) 0 var(--space-16); background: linear-gradient(var(--hairline-strong), var(--hairline-strong)) left center / var(--hairline-w) var(--space-18) no-repeat; }
   }
-
-  /* Desktop: the first screen is the slide, centred on both axes; the marks close it on the centre axis; "Also" is a
-     quiet line on the stage floor. */
+  
   @media (min-width: 1000px) {
     .also { max-width: none; margin: calc(var(--space-12) * -1) 0 0; display: flex; justify-content: center; align-items: baseline; gap: var(--space-4) var(--space-28); flex-wrap: wrap; }
-    .also h2 { margin: 0; }
+    .also h2 { margin: 0 var(--space-12) 0 0; }   
     .also ul { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4) var(--space-28); }
-    /* Still 44 px tall to the finger (an iPad in landscape is a touch screen at desktop width); the text sits on the
-       same baseline as before, and the stage's bottom padding gives back the extra height. */
-    .also a { display: inline-flex; align-items: center; min-height: var(--tap); padding: 0; border: 0; }
-    /* The titles read as links at rest (his 7B, 18 Oct): the "Open mail" hairline underline, brightening on hover. */
+    .also a { display: inline-flex; align-items: center; gap: 0; min-height: var(--tap); padding: 0; border: 0; }   
     .also .t { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--hairline-strong); text-decoration-thickness: var(--hairline-w); text-underline-offset: var(--underline-offset); transition: color var(--dur-hover) var(--ease-out), text-decoration-color var(--dur-hover) var(--ease-out); }
     @media (hover: hover) { .also a:hover .t { text-decoration-color: currentColor; } }
     .also .w { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
     .also li { position: relative; }
     .also-body, .also-in { display: contents; }
-    /* A link to a page in another language keeps its "what" visible, so nobody lands on Georgian unwarned. */
     .also a[data-xl] .w { position: static; width: auto; height: auto; overflow: visible; clip: auto; clip-path: none; margin-left: var(--space-8); color: var(--ink-4); }
   }
-
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: 0.01ms !important; animation: none !important; }
   }
@@ -563,7 +444,6 @@
 <body>
 <main class="stage">
   <div class="top" data-enter><a class="lang" id="lang" href="/ka/" hreflang="ka" lang="ka" aria-label="ქართულად" data-goatcounter-click="lang-ka" data-goatcounter-title="Language key to /ka/"><!-- flag-icons 7.5.0, MIT --><svg class="flag flag-ge" viewBox="0 0 640 480" width="20" height="15" aria-hidden="true" focusable="false"><path fill="#fff" d="M0 0h640v480H0z"/><path fill="red" d="M272 0h96v480h-96z"/><path fill="red" d="M0 192h640v96H0z"/><path fill="red" fill-rule="evenodd" d="M146.8 373.1c1-16.8 4-31.1 4-31.1s-9.8 1-14.8 1-14.8-1-14.8-1 3 14.3 4 31.2c-16.9-1-31.2-4-31.2-4s1 7.4 1 14.8-1 14.8-1 14.8 14.3-3 31.2-4c-1 16.9-4 31.2-4 31.2s7.4-1 14.8-1 14.8 1 14.8 1-3-14.3-4-31.2c16.9 1 31.2 4 31.2 4s-1-9.8-1-14.8 1-14.8 1-14.8-14.3 3-31.1 4zm368-288c1-16.8 4-31.1 4-31.1s-9.8 1-14.8 1-14.8-1-14.8-1 3 14.3 4 31.1c-16.9-1-31.2-3.9-31.2-3.9s1 7.4 1 14.8-1 14.8-1 14.8 14.3-3 31.2-4c-1 16.9-4 31.2-4 31.2s7.4-1 14.8-1 14.8 1 14.8 1-3-14.3-4-31.1c16.9 1 31.2 4 31.2 4s-1-10-1-14.9 1-14.8 1-14.8-14.3 3-31.2 4zm-368 0c1-16.8 4-31.1 4-31.1s-9.8 1-14.8 1-14.8-1-14.8-1 3 14.3 4 31.2c-16.9-1-31.2-4-31.2-4s1 7.4 1 14.8-1 14.8-1 14.8 14.3-3 31.2-4c-1 16.9-4 31.2-4 31.2s7.4-1 14.8-1 14.8 1 14.8 1-3-14.3-4-31.2c16.9 1 31.2 4 31.2 4s-1-9.8-1-14.8 1-14.8 1-14.8-14.3 3-31.1 4zm368 288c1-16.8 4-31.1 4-31.1s-9.8 1-14.8 1-14.8-1-14.8-1 3 14.3 4 31.2c-16.9-1-31.2-4-31.2-4s1 7.4 1 14.8-1 14.8-1 14.8 14.3-3 31.2-4c-1 16.9-4 31.2-4 31.2s7.4-1 14.8-1 14.8 1 14.8 1-3-14.3-4-31.2c16.9 1 31.2 4 31.2 4s-1-9.8-1-14.8 1-14.8 1-14.8-14.3 3-31.2 4z"/></svg></a></div>
-
   <div class="slide">
     <figure class="pic" data-enter>
       <picture>
@@ -572,10 +452,8 @@
         <img src="/assets/img/demetre-mildiani-portrait-dark-600.jpg" srcset="/assets/img/demetre-mildiani-portrait-dark-600.jpg 600w, /assets/img/demetre-mildiani-portrait-dark-1200.jpg 1200w" sizes="(min-width: 1000px) 240px, (min-width: 600px) 168px, 144px" width="600" height="750" alt="Demetre Mildiani, smiling, in a dark zip-neck sweater, in front of a charcoal studio backdrop" decoding="async" fetchpriority="high">
       </picture>
     </figure>
-
     <h1 class="name" data-enter><span>Demetre</span> <span>Mildiani</span></h1>
     <p class="line" data-enter>7+ years in marketing and operations.</p>
-
     <div class="reach">
       <ul class="icons" aria-label="Profiles and email" data-enter>
         <li class="tip-host"><a class="ico" rel="me" href="https://www.linkedin.com/in/demetre-mildiani/" lang="en" aria-label="LinkedIn" aria-describedby="tip-linkedin" data-goatcounter-click="out-linkedin" data-goatcounter-title="LinkedIn"><svg viewBox="-1.5 -1.5 27 27" width="24" height="24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a><span class="tip" role="tooltip" id="tip-linkedin" lang="en">in/demetre-mildiani</span></li>
@@ -590,7 +468,6 @@
     </div>
     <span class="sr" role="status" id="copied"></span>
   </div>
-
   <section class="also" aria-labelledby="also-h" data-enter>
     <h2 id="also-h"><span class="also-lb">Also</span><button class="also-tg" type="button" id="also-tg" aria-expanded="false" aria-controls="also-list" hidden data-goatcounter-click="also-toggle" data-goatcounter-title="Also, opened or closed (phone)"><span>Also</span><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M6 9.5 12 15.5 18 9.5"/></svg></button></h2>
     <div class="also-body" id="also-list"><div class="also-in">
@@ -612,8 +489,6 @@
     function calm() { return !!M && !RM.matches; }
     function syncRM() { if (M && M.MotionGlobalConfig) M.MotionGlobalConfig.skipAnimations = RM.matches; }
     syncRM(); if (RM.addEventListener) RM.addEventListener('change', syncRM);
-    /* The motion tokens live in the stylesheet (one set of numbers for CSS and JS): seconds and plain numbers come
-       back from parseFloat, an easing as its four cubic-bezier numbers, a distance in px. */
     var CS = getComputedStyle(root);
     function token(n) { return CS.getPropertyValue(n).trim(); }
     function num(n) { return parseFloat(token(n)); }
@@ -629,13 +504,10 @@
       return Promise.resolve();
     }
     function to(els, kf, opt) { return calm() ? M.animate(els, kf, opt) : jump(els, kf); }
-
     var $ = function (s) { return document.querySelector(s); };
     var all = function (s) { return [].slice.call(document.querySelectorAll(s)); };
     var COPIED = 'Email address copied';
-
-    /* The photo follows the theme: the dark print always, the light one only under "#light" (its <source> is off by
-       default, "media: not all"); the browser bar's colour follows too. */
+    
     var srcL = $('#pic-light'), bar = $('meta[name="theme-color"]');
     function syncPic() {
       var light = root.getAttribute('data-theme') === 'light';
@@ -643,10 +515,7 @@
       bar.setAttribute('content', token('--bg'));
     }
     syncPic(); window.addEventListener('hashchange', syncPic);
-
-    /* AlsoFold: below 1000 px "Also" is a switch over its rows, closed at first (the stylesheet has the why). The
-       CSS moves the fold and the chevron; Motion drops the rows in, a beat apart. If the open list ends below the
-       screen, the page scrolls just enough to show it. */
+    
     var also = $('.also'), alsoLb = $('.also-lb'), alsoTg = $('#also-tg'),
         WIDE = window.matchMedia ? matchMedia('(min-width: 1000px)') : { matches: true }, alsoOpen = false, ftok = 0;
     function rowsOf() { return all('.also li'); }
@@ -676,13 +545,7 @@
     alsoTg.addEventListener('click', function () { setFold(!alsoOpen, true); });
     foldMode();
     if (WIDE.addEventListener) WIDE.addEventListener('change', foldMode); else if (WIDE.addListener) WIDE.addListener(foldMode);
-
-    /* Entrance: the print comes up first, like a stage light; then five steps a beat apart, in reading order: the
-       name, the line, the marks (together, as one block), Also, and last the flag, which sits outside the composition.
-       Done by 0.86 s (the build checks the 0.9 s ceiling). The marks animate as their li, never ul.icons: a transform
-       left on the ul would make it a stacking context, and Also, later in the page, would then paint over the tips.
-       Only while the gate is still up: on a slow connection the 1.2 s failsafe may already have shown the page, and
-       fading it out to fade it back in would be the very flash the gate exists to prevent. */
+    
     function enter() {
       var gated = root.classList.contains('m-pre');
       if (calm() && gated) {
@@ -696,15 +559,7 @@
       root.classList.remove('m-pre');
     }
     enter();
-
     if (M) {
-      /* Press: a mark (and the copy mark in the email card) dips to 0.9 (it is small, so it needs the deeper dip to be
-         seen), the flag to 0.985, and each springs back. Two guards keep Motion from ever reading the resting
-         "transform: none", which it interpolates as scale(0): an inline scale(1) is seeded before the first press,
-         and the press keyframes start explicitly at scale(1). Without them a quick tap (released before the press
-         animation had drawn a frame) made the release spring start from almost nothing: measured in headless Chrome,
-         the key fell to scale 0.07 at 36 ms after a 0 ms tap and to 0.63 after a 40 ms hold, then grew back. With
-         them it stays between the dip and 1.0001, and a 0 ms tap does not move at all. */
       M.press('.ico, .copy, .lang', function (el) {
         if (!calm()) return;
         if (!el.style.transform) el.style.transform = 'scale(1)';
@@ -712,10 +567,7 @@
         return function () { M.animate(el, { transform: 'scale(1)' }, SETTLE); };
       });
     }
-
-    /* Copy: the clipboard API where it exists, the old execCommand route where it doesn't, and if both fail the
-       address is left selected so it can be copied by hand. The copy mark turns into a tick for --hold-copied (1.6 s),
-       its state is data-state="copied" meanwhile, and the live region says so. */
+    
     var ADDR = 'contact@demetremildiani.com', btn = $('#copy'), A = btn.querySelector('.cp-a'), B = btn.querySelector('.cp-b'),
         status = $('#copied'), hold, busy = false;
     function swap(out, inn) {
@@ -729,7 +581,6 @@
       hold = setTimeout(function () { swap(B, A); btn.removeAttribute('data-state'); status.textContent = ''; }, num('--hold-copied') * 1000);
     }
     function fallback() {
-      /* The hidden textarea takes focus for a moment; "busy" keeps that from closing the card, and focus goes back. */
       var ok = false, ta = document.createElement('textarea'), was = document.activeElement;
       ta.value = ADDR; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.top = '-200px'; ta.style.opacity = '0';
       busy = true; document.body.appendChild(ta); ta.select();
@@ -743,11 +594,7 @@
       if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(ADDR).then(done, fallback);
       else fallback();
     });
-
-    /* The email card. In the HTML the envelope is a plain mailto link (the page without JS); here it becomes the card's
-       switch, a button to assistive tech, with aria-expanded and aria-controls. Opening moves focus to the copy mark;
-       closing gives it back to the envelope when it was inside the card. It closes on Escape, on a click or tap outside
-       it, on a second tap of the envelope, and when focus leaves it for somewhere else on the page. */
+    
     var ico = $('#mail-ico'), pop = $('#mail-pop'), tok = 0;
     ico.setAttribute('role', 'button'); ico.setAttribute('aria-expanded', 'false'); ico.setAttribute('aria-controls', 'mail-pop');
     function isOpen() { return ico.getAttribute('aria-expanded') === 'true'; }
@@ -771,17 +618,9 @@
     }
     ico.addEventListener('click', function (e) { e.preventDefault(); if (isOpen()) hide(); else show(); });
     ico.addEventListener('keydown', function (e) { if (e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); ico.click(); } });
-    /* Escape closes the card if it is open, and otherwise hides any tooltip showing (WCAG 1.4.13: dismissible
-       without moving the pointer or focus). A dismissed tip stays hidden until the pointer leaves its mark or focus
-       moves on. */
     var hosts = all('.tip-host');
     function hush(h) { h.setAttribute('data-state', 'dismissed'); }
     function wake() { this.removeAttribute('data-state'); }
-    /* Keep a tip on screen: centred under its mark unless that takes it closer than --gutter to the window's edge;
-       then it slides in by --tip-dx and --cx keeps the notch over the mark (no nearer the tip's ends than
-       --notch-inset). Measured just before it can show (pointer in, focus in), on resize, and whenever the tip itself
-       changes size: its width follows the text size, which a browser setting can change with no resize, and a hidden
-       tip still placed for the old size hangs past the edge and the page scrolls sideways (200% text at 320 px). */
     function place(h) {
       var t = h.querySelector('.tip'); if (!t) return;
       var r = h.getBoundingClientRect(), w = t.offsetWidth, vw = root.clientWidth, g = num('--gutter'), k = num('--notch-inset');
