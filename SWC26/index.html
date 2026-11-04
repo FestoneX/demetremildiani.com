@@ -409,6 +409,8 @@
   .cta a:active { color: var(--ink); }
   @media (hover: hover) { .cta a:hover { color: var(--ink); } .cta a:hover .go { text-decoration-color: currentColor; } }
   @media (min-width: 1000px) { .cta { margin-top: calc(var(--space-12) * -1); } }
+  .cta .mark { display: block; width: calc(var(--space-72) * 235 / 288); height: var(--space-72); margin: 0 auto var(--space-8); background-color: var(--ink-3); -webkit-mask: url(/assets/img/startup-world-cup-mark.png) center / contain no-repeat; mask: url(/assets/img/startup-world-cup-mark.png) center / contain no-repeat; }
+  @media (forced-colors: active) { .cta .mark { forced-color-adjust: none; background-color: CanvasText; } }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: 0.01ms !important; animation: none !important; }
   }
@@ -442,7 +444,8 @@
     <span class="sr" role="status" id="copied"></span>
   </div>
   <section class="cta" data-enter>
-    <a href="mailto:demetre@nairos.com?subject=SWC26" data-goatcounter-click="cta-swc" data-goatcounter-title="SWC26: Let&#x27;s connect">Here for SF Startup World <span class="nw">Cup 2026?</span> <span class="go nw">Let's connect</span></a>
+    <span class="mark" aria-hidden="true"></span>
+    <a href="https://www.linkedin.com/in/demetre-mildiani/" data-goatcounter-click="cta-swc" data-goatcounter-title="SWC26: Let&#x27;s connect">Here for SF Startup World <span class="nw">Cup 2026?</span> <span class="go nw">Let's connect</span></a>
   </section>
 </main>
 <script src="/assets/motion/motion-14.0.0.min.js"></script>
